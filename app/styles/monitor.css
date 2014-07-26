@@ -1,0 +1,72 @@
+.container {
+  margin: 0.1em;
+}
+.projects-result, .project-container {
+  display: inline-block;
+}
+.project-box {
+  display: inline-block;
+  padding: 0.5em;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #DDD;
+  width: 24em;
+  box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
+  font-size: 120%;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+.project-box:hover {
+  border: 1px solid #BBB;
+}
+.project-box a {
+  color: white;
+}
+.project-name {
+  line-height: 132%;
+  font-size: 132%;
+}
+.error-msg, .update-info {
+  margin: 0 0.2em;
+  padding: 0.2em 1em;
+  font-size: 130%;
+}
+
+.project-status-running {
+  -webkit-animation: progress-bar-stripes 2s linear infinite;
+  background-image: linear-gradient(45deg,rgba(255,255,255,.3) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.3) 75%,transparent 75%,transparent);
+  /*-webkit-animation:move 2s linear infinite;*/
+  /*-moz-animation:move 2s linear infinite;*/
+  /*-ms-animation:move 2s linear infinite;*/
+  /*animation:move 2s linear infinite;*/
+
+  -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+  box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+  background-size: 40px 40px;
+}
+
+.update-info {
+  background-color: #666;
+  color: white;
+}
+
+.error-msg {
+  background-color: red;
+  color: white;
+}
+
+.spinner {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:1000;
+  background-color: grey;
+  opacity: .4;
+}
