@@ -2,14 +2,17 @@
 
 angular.module('cimonitorApp')
   .factory('monitorUrl', function($routeParams) {
+    var params = {app: $routeParams.app};
     return {
       url: function(){ 
         return 'demo/cctray_sample.xml';
         //return 'ec';
       },
       params: function(){
-        var ret = {app: $routeParams.app};
-        return ret;
+        return params;
+      },
+      config: function() {
+        return { params: params };
       }
     };
   });
@@ -36,9 +39,10 @@ angular.module('cimonitorApp')
     };
     var onSuccess = function(data) {
       //TODO check if Projects are defined
-      var allProjects = data.Projects.Project
+      var jsonData = x2js.xml_str2json(data);
+      var allProjects = jsonData.Projects.Project;
       obj.all = _.map(allProjects, normalizeKeys);
-      obj.lastUpdate = moment.format('MMM, Do HH:mm:ss');
+      obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
       obj.error = false;
     };
     var onError = function(data, status) {
@@ -46,18 +50,9 @@ angular.module('cimonitorApp')
       obj.errorMessage = 'Failed to load build status';
       console.log('Error loading build status, got status ' + status + ' and data ' + data);
     };
-    var transform2json = function(data){
-      return x2js.xml_str2json(data);
-    };
 
     obj.update = function() {
-      return $http.get(
-          monitorUrl.url(),
-          {
-            transformResponse: transform2json,
-            params: monitorUrl.params()
-          }
-          )
+      return $http.get(monitorUrl.url(), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
     };
