@@ -11,7 +11,11 @@
     "angular-sanitize": "1.2.16",
     "angular-animate": "1.2.16",
     "angular-touch": "1.2.16",
-    "angular-route": "1.2.16"
+    "angular-route": "1.2.16",
+    "angular-x2js": "~0.1.1",
+    "underscore": "~1.6.0",
+    "angular-underscore-module": "*",
+    "angular-moment": "~0.7.1"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

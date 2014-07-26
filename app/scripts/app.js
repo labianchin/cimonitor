@@ -15,7 +15,10 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'underscore',
+    'angularMoment',
+    'cb.x2js'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -23,6 +26,11 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+      .when('/monitor/:app', {
+          controller: 'MonitorCtrl',
+          templateUrl: 'views/monitor.html',
+          pageKey: 'monitor'
+        })
       .when('/about', {
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
