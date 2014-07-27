@@ -48,14 +48,32 @@ angular.module('cimonitorApp')
       obj.error = true;
       obj.errorMessage = msg;
     };
-    var onSuccess = function(data) {
-      var jsonData = x2js.xml_str2json(data);
+    var filterProjects = function(all, search) {
+      if(search.length > 0) {
+        return _.filter(all, function(p){
+          return _.contains(search, p.name);
+        });
+      } else { // no filter
+        return all;
+      }
+    };
+    var processProjects = function(jsonData, search){
       if (undefinedOrNull(jsonData) || undefinedOrNull(jsonData.Projects) || undefinedOrNull(jsonData.Projects.Project)){
         makeError('Invalid response');
+        return null;
+      } else {
+        var normalized = _.map(jsonData.Projects.Project, normalizeKeys);
+        return filterProjects(normalized, search);
       }
-      allResults = _.map(jsonData.Projects.Project, normalizeKeys);
-      obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
-      obj.error = false;
+    };
+    var onSuccess = function(data) {
+      var jsonData = x2js.xml_str2json(data);
+      var results = processProjects(jsonData, []);
+      if (results != null) {
+        allResults = results;
+        obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
+        obj.error = false;
+      }
     };
     var onError = function(data, status) {
       makeError('Failed to load build status');
