@@ -18,6 +18,14 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
+  .factory('goService', ['$location', function($location) {
+    return function(path) {
+      $location.path(path);
+    };
+  }]);
+
+'use strict';
+angular.module('cimonitorApp')
   .factory('buildFetcherService', function($http, monitorUrl, x2js, _, moment) {
     var normalizeKeys = function(p) {
       for (var f in p) {
@@ -146,9 +154,10 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig) {
+  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService) {
     $scope.builds = buildFetcherService;
     $scope.spinning = spinningService;
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
+    $scope.go = goService;
   });

@@ -84,3 +84,10 @@
   background-color: grey;
   opacity: .4;
 }
+.center {
+    text-align:center;
+}
+
+.center form {
+    display:inline-block;
+}

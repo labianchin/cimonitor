@@ -1,23 +1,33 @@
 <div class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
-  <p class="lead">
-    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
-  </p>
-  <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!<span class="glyphicon glyphicon-ok"></span></a></p>
+  <h1>CI Monitor</h1>
 </div>
 
 <div class="row marketing">
-  <h4>HTML5 Boilerplate</h4>
+  <h4>Configuration</h4>
   <p>
-    HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.
+    Please configure the CC.xml URLs, which project will be monitored and how often should the monitor refresh.
   </p>
 
-  <h4>Angular</h4>
-  <p>
-    AngularJS is a toolset for building the framework most suited to your application development.
-  </p>
-
-  <h4>Karma</h4>
-  <p>Spectacular Test Runner for JavaScript.</p>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form role="form" novalidate class="simple-form">
+        <div ng-repeat="source in config.presets">
+          <div class="form-group">
+            <label for="monitorSource{{$index}}Url">URL</label>
+            <input type="text" id="monitorSource{{$index}}Url" class="form-control" ng-model="source.url" />
+          </div>
+          <div class="form-group" ng-hide="true">
+            <label for="monitorSource{{$index}}Projects">Projects</label>
+            <input type="text" id="monitorSource{{$index}}Projects" class="form-control" ng-model="source.projects" />
+          </div>
+          <div class="form-group">
+            <label for="monitorSource{{$index}}Refresh">Refresh Rate (seconds)</label>
+            <input type="text" id="monitorSource{{$index}}Refresh" class="form-control" ng-model="source.refreshRate" />
+          </div>
+        </div>
+        <button ng-click="config.addSource()" class="btn btn-default" ng-hide="true">Add new source</button>
+        <a href="#/monitor" class="btn btn-default">OK</a>
+      </form>
+    </div>
+  </div>
 </div>
