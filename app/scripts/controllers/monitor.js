@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('cimonitorApp')
-  .factory('monitorUrl', function($routeParams) {
+  .factory('monitorUrl', function() {
     var params = {};//{app: $routeParams.app};
     return {
-      url: function(){
+      url: function(config){
         //return $routeParams.app;
-        return 'demo/cctray_sample.xml';
+        return config.url;
       },
       params: function(){
         return params;
@@ -51,8 +51,8 @@ angular.module('cimonitorApp')
       console.log('Error loading build status, got status ' + status + ' and data ' + data);
     };
 
-    obj.update = function() {
-      return $http.get(monitorUrl.url(), monitorUrl.config())
+    obj.update = function(config) {
+      return $http.get(monitorUrl.url(config), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
     };
@@ -73,6 +73,33 @@ angular.module('cimonitorApp')
     }
     return obj;
   });
+
+'use strict';
+angular.module('cimonitorApp')
+  .factory('monitorConfig', function($interval, spinningService, buildFetcherService){
+
+    var config = {
+      url: 'demo/cctray_sample.xml',
+      projects: 'nothing here',
+      refreshRate: 20,
+      reconfig: null
+    };
+    config.reconfig = function() {
+      console.log("config changed!!");
+      console.debug(config);
+      if (refreshPromise != null) {
+        $interval.cancel(refreshPromise);
+      }
+      getBuilds();
+      refreshPromise = $interval(getBuilds, config.refreshRate*1000);
+    };
+    var getBuilds = function () {
+      spinningService.spin(buildFetcherService.update(config));
+    };
+    var refreshPromise = null;
+    return config;
+  });
+
 'use strict';
 /**
  * @ngdoc function
@@ -82,16 +109,9 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService) {
+  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig) {
     $scope.builds = buildFetcherService;
     $scope.spinning = spinningService;
-
-    var getBuilds = function () {
-      spinningService.spin(buildFetcherService.update());
-    };
-
-    getBuilds();
-
-    var timeoutValue = 20000;
-    $interval(getBuilds, timeoutValue);
+    $scope.config = monitorConfig;
+    monitorConfig.reconfig();
   });
