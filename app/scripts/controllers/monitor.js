@@ -4,9 +4,8 @@ angular.module('cimonitorApp')
   .factory('monitorUrl', function() {
     var params = {};//{app: $routeParams.app};
     return {
-      url: function(config){
-        //return $routeParams.app;
-        return config.url;
+      url: function(source){
+        return source.url;
       },
       params: function(){
         return params;
@@ -58,8 +57,8 @@ angular.module('cimonitorApp')
       console.log('Error loading build status, got status ' + status + ' and data ' + data);
     };
 
-    obj.update = function(config) {
-      return $http.get(monitorUrl.url(config), monitorUrl.config())
+    obj.update = function(source) {
+      return $http.get(monitorUrl.url(source), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
     };

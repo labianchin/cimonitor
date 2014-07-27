@@ -26,7 +26,7 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/monitor/:app', {
+      .when('/monitor', {
           controller: 'MonitorCtrl',
           templateUrl: 'views/monitor.html',
           pageKey: 'monitor'
