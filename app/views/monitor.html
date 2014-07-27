@@ -7,7 +7,7 @@
       Last updated: {{builds.lastUpdate}}
     </div>
     <div class="projects-results">
-      <div ng-repeat="b in builds.all | orderBy:['-lastBuildTime']" class="project-container">
+      <div ng-repeat="b in builds.all() | orderBy:['-lastBuildTime']" class="project-container">
         <div class="project-box" ng-class="{'project-status-running': b.activity == 'Building', 'btn-success': b.lastBuildStatus == 'Success', 'btn-danger': b.lastBuildStatus == 'Failure' || b.lastBuildStatus == 'Exception', 'btn-warning': b.lastBuildStatus == 'Warning', 'btn-info': b.lastBuildStatus == 'Unknown'}">
           <a href="{{b.webUrl}}">
             <div class="project-name">{{b.name}}</div>

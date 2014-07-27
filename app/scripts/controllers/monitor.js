@@ -31,8 +31,13 @@ angular.module('cimonitorApp')
       return p;
     };
 
+
+    var allResults = [];
+    var getAll = function() {
+      return allResults;
+    };
     var obj = {
-      all: [],
+      all: getAll,
       lastUpdate: '',
       error: false
     };
@@ -48,7 +53,7 @@ angular.module('cimonitorApp')
       if (undefinedOrNull(jsonData) || undefinedOrNull(jsonData.Projects) || undefinedOrNull(jsonData.Projects.Project)){
         makeError('Invalid response');
       }
-      obj.all = _.map(jsonData.Projects.Project, normalizeKeys);
+      allResults = _.map(jsonData.Projects.Project, normalizeKeys);
       obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
       obj.error = false;
     };
