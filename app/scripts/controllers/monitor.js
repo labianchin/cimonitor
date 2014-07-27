@@ -77,26 +77,34 @@ angular.module('cimonitorApp')
 'use strict';
 angular.module('cimonitorApp')
   .factory('monitorConfig', function($interval, spinningService, buildFetcherService){
-
-    var config = {
-      url: 'demo/cctray_sample.xml',
-      projects: 'nothing here',
-      refreshRate: 20,
-      reconfig: null
+    var defaultSource = 
+        {
+        url: 'demo/cctray_sample.xml',
+        projects: 'nothing here',
+        refreshRate: 20
+        };
+    var addSource = function(){
+      config.presets.push({});
+      console.debug(config);
     };
-    config.reconfig = function() {
+    var reconfig = function() {
       console.log("config changed!!");
       console.debug(config);
       if (refreshPromise != null) {
         $interval.cancel(refreshPromise);
       }
       getBuilds();
-      refreshPromise = $interval(getBuilds, config.refreshRate*1000);
+      refreshPromise = $interval(getBuilds, config.presets[0].refreshRate*1000);
     };
     var getBuilds = function () {
-      spinningService.spin(buildFetcherService.update(config));
+      spinningService.spin(buildFetcherService.update(config.presets[0]));
     };
     var refreshPromise = null;
+    var config = {
+      presets: [defaultSource],
+      reconfig: reconfig,
+      addSource: addSource
+    };
     return config;
   });
 
