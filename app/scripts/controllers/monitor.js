@@ -2,11 +2,11 @@
 
 angular.module('cimonitorApp')
   .factory('monitorUrl', function($routeParams) {
-    var params = {app: $routeParams.app};
+    var params = {};//{app: $routeParams.app};
     return {
-      url: function(){ 
+      url: function(){
+        //return $routeParams.app;
         return 'demo/cctray_sample.xml';
-        //return 'ec';
       },
       params: function(){
         return params;

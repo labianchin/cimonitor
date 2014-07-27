@@ -14,8 +14,11 @@
 .monitor-container {
   margin: 0.1em;
 }
-.projects-result, .project-container {
+.projects-results, .project-container {
   display: inline-block;
+}
+.projects-results {
+  margin: 0 0.2em;
 }
 .project-box {
   display: inline-block;
@@ -43,12 +46,6 @@
   line-height: 132%;
   font-size: 132%;
 }
-.error-msg, .update-info {
-  margin: 0 0.2em;
-  padding: 0.2em 1em;
-  font-size: 130%;
-}
-
 .project-status-running {
   -webkit-animation: progress-bar-stripes 2s linear infinite;
   background-image: linear-gradient(45deg,rgba(255,255,255,.3) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.3) 75%,transparent 75%,transparent);
@@ -63,11 +60,15 @@
   background-size: 40px 40px;
 }
 
+.error-msg, .update-info {
+  margin: 0 0.2em;
+  padding: 0.2em 1em;
+  font-size: 130%;
+}
 .update-info {
   background-color: #666;
   color: white;
 }
-
 .error-msg {
   background-color: red;
   color: white;

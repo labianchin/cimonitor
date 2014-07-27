@@ -1,9 +1,10 @@
-
-
 <div class="monitor-view">
   <div class="monitor-container">
     <div class="error-msg" ng-show="builds.error">
       {{builds.errorMessage}}
+    </div>
+    <div class="update-info" ng-hide="build.error">
+      Last updated: {{builds.lastUpdate}}
     </div>
     <div class="projects-results">
       <div ng-repeat="b in builds.all | orderBy:['-lastBuildTime']" class="project-container">
@@ -16,9 +17,6 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="update-info">
-    Last updated: {{builds.lastUpdate}}
   </div>
   <div class="spinner" ng-show="spinning.loading">
     <img src="images/loading.gif" class="ajax-loader" width="32" height="32"/>
