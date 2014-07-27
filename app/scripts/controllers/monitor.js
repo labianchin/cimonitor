@@ -37,17 +37,24 @@ angular.module('cimonitorApp')
       lastUpdate: '',
       error: false
     };
+    var undefinedOrNull = function(val) {
+      return angular.isUndefined(val) || val === null;
+    };
+    var makeError = function(msg) {
+      obj.error = true;
+      obj.errorMessage = msg;
+    };
     var onSuccess = function(data) {
-      //TODO check if Projects are defined
       var jsonData = x2js.xml_str2json(data);
-      var allProjects = jsonData.Projects.Project;
-      obj.all = _.map(allProjects, normalizeKeys);
+      if (undefinedOrNull(jsonData) || undefinedOrNull(jsonData.Projects) || undefinedOrNull(jsonData.Projects.Project)){
+        makeError('Invalid response');
+      }
+      obj.all = _.map(jsonData.Projects.Project, normalizeKeys);
       obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
       obj.error = false;
     };
     var onError = function(data, status) {
-      obj.error = true;
-      obj.errorMessage = 'Failed to load build status';
+      makeError('Failed to load build status');
       console.log('Error loading build status, got status ' + status + ' and data ' + data);
     };
 
