@@ -40,12 +40,8 @@ angular.module('cimonitorApp')
     };
 
 
-    var allResults = [];
-    var getAll = function() {
-      return allResults;
-    };
     var obj = {
-      all: getAll,
+      all: [],
       lastUpdate: '',
       error: false
     };
@@ -71,14 +67,19 @@ angular.module('cimonitorApp')
         return null;
       } else {
         var normalized = _.map(jsonData.Projects.Project, normalizeKeys);
-        return filterProjects(normalized, search);
+        var filtered = filterProjects(normalized, search);
+        var enhanced =_.map(filtered, function(p) {
+          p.isRecent = moment(p.lastBuildTime).add(10, 'minutes').isAfter(moment());
+          return p;
+        });
+        return enhanced;
       }
     };
     var onSuccess = function(data) {
       var jsonData = x2js.xml_str2json(data);
       var results = processProjects(jsonData, []);
       if (results != null) {
-        allResults = results;
+        obj.all = results;
         obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
         obj.error = false;
       }
