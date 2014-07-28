@@ -84,9 +84,9 @@ angular.module('cimonitorApp')
         obj.error = false;
       }
     };
-    var onError = function(data, status) {
-      makeError('Failed to load build status');
-      console.log('Error loading build status, got status ' + status + ' and data ' + data);
+    var onError = function(data, status, headers, config) {
+      makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
+      console.log('Error fetching report, got status ' + status + ' and data ' + data);
     };
 
     obj.update = function(source) {
