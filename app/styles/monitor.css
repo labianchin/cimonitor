@@ -50,6 +50,11 @@
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
+  text-overflow: ellipsis;
+
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
 }
 .project-status-blinking {
   -webkit-transition: background 0.05s ease-in-out;
