@@ -72,6 +72,7 @@ angular.module('cimonitorApp')
           p.isRecent = moment(p.lastBuildTime).add(10, 'minutes').isAfter(moment());
           return p;
         });
+        console.log(enhanced);
         return enhanced;
       }
     };
@@ -89,13 +90,13 @@ angular.module('cimonitorApp')
       console.log('Error fetching report, got status ' + status + ' and data ' + data);
     };
 
-    obj.update = function(source) {
+    var update = function(source) {
       return $http.get(monitorUrl.url(source), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
     };
 
-    return obj;
+    return {obj: obj, update: update};
   });
 
 'use strict';
@@ -115,29 +116,29 @@ angular.module('cimonitorApp')
 'use strict';
 angular.module('cimonitorApp')
   .factory('monitorConfig', function($interval, spinningService, buildFetcherService){
-    var defaultSource = 
-        {
-        url: 'demo/cctray_sample.xml',
-        projects: 'nothing here',
-        refreshRate: 20
-        };
     var addSource = function(){
       config.presets.push({});
       console.debug(config);
     };
+    var refreshPromise = null;
     var reconfig = function() {
       console.log("config changed!!");
       console.debug(config);
       if (refreshPromise != null) {
         $interval.cancel(refreshPromise);
+        console.log('canceling promise');
       }
+      var getBuilds = function () {
+        spinningService.spin(buildFetcherService.update(config.presets[0]));
+      };
       getBuilds();
       refreshPromise = $interval(getBuilds, config.presets[0].refreshRate*1000);
     };
-    var getBuilds = function () {
-      spinningService.spin(buildFetcherService.update(config.presets[0]));
+    var defaultSource = {
+        url: 'demo/cctray_sample.xml',
+        projects: 'nothing here',
+        refreshRate: 20
     };
-    var refreshPromise = null;
     var config = {
       presets: [defaultSource],
       reconfig: reconfig,
@@ -156,7 +157,7 @@ angular.module('cimonitorApp')
  */
 angular.module('cimonitorApp')
   .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService) {
-    $scope.builds = buildFetcherService;
+    $scope.builds = buildFetcherService.obj;
     $scope.spinning = spinningService;
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
