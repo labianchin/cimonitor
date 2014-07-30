@@ -26,7 +26,29 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, monitorUrl, x2js, _, moment) {
+  .factory('projectsModel', function($http, monitorUrl, x3js, _, moment) {
+    var updateAll = function(){
+      var values = _.values(model.byUrl);
+      obj.all = _.flatten(values, true);
+    };
+    var setProjectStatus = function(url, builds){
+      builds.byUrl[url] = builds;
+      updateAll();
+    };
+
+    var model = {
+      all: [],
+      lastUpdate: '',
+      error: false,
+      byUrl: {},
+      setProjectStatus: setProjectStatus
+    };
+    return model;
+  });
+
+'use strict';
+angular.module('cimonitorApp')
+  .factory('processProjectsService', function(_, moment) {
     var normalizeKeys = function(p) {
       for (var f in p) {
         if (p.hasOwnProperty(f)) {
@@ -38,19 +60,8 @@ angular.module('cimonitorApp')
       }
       return p;
     };
-
-
-    var obj = {
-      all: [],
-      lastUpdate: '',
-      error: false
-    };
     var undefinedOrNull = function(val) {
       return angular.isUndefined(val) || val === null;
-    };
-    var makeError = function(msg) {
-      obj.error = true;
-      obj.errorMessage = msg;
     };
     var filterProjects = function(all, search) {
       if(search.length > 0) {
@@ -63,7 +74,6 @@ angular.module('cimonitorApp')
     };
     var processProjects = function(jsonData, search){
       if (undefinedOrNull(jsonData) || undefinedOrNull(jsonData.Projects) || undefinedOrNull(jsonData.Projects.Project)){
-        makeError('Invalid response');
         return null;
       } else {
         var normalized = _.map(jsonData.Projects.Project, normalizeKeys);
@@ -76,13 +86,35 @@ angular.module('cimonitorApp')
         return enhanced;
       }
     };
+    return processProjects
+  });
+
+'use strict';
+angular.module('cimonitorApp')
+  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, _, moment, processProjectsService) {
+
+    var obj = {
+      all: [],
+      lastUpdate: '',
+      error: false
+    };
+    var makeError = function(msg) {
+      obj.error = true;
+      obj.errorMessage = msg;
+    };
     var onSuccess = function(data) {
       var jsonData = x2js.xml_str2json(data);
-      var results = processProjects(jsonData, []);
+      var results = processProjectsService(jsonData, []);
       if (results != null) {
-        obj.all = results;
-        obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
-        obj.error = false;
+        /* Wraps to call $angular.$apply */
+        $timeout(function(){
+          obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
+          obj.error = false;
+          obj.all = results;
+          //if (typeof ret.callRefresh !== "undefined" && ret.callRefresh !== null) { callRefresh(); }
+        }, 100);
+      } else {
+        makeError('Invalid response');
       }
     };
     var onError = function(data, status, headers, config) {
@@ -95,8 +127,9 @@ angular.module('cimonitorApp')
         .success(onSuccess)
         .error(onError);
     };
+    var ret = {obj: obj, update: update, callRefresh: null};
 
-    return {obj: obj, update: update};
+    return ret;
   });
 
 'use strict';
@@ -158,8 +191,14 @@ angular.module('cimonitorApp')
 angular.module('cimonitorApp')
   .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService) {
     $scope.builds = buildFetcherService.obj;
+    buildFetcherService.callRefresh = function(){ $scope.apply(); console.log('refreshed');};
     $scope.spinning = spinningService;
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
     $scope.go = goService;
+    $scope.updated = 1;
+    $scope.$watch('builds.all', function(newValue, oldValue) {
+      if (newValue === oldValue) { return; } // AKA first run
+      console.debug($scope.updated++);
+    });
   });
