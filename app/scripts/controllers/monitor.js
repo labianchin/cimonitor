@@ -26,14 +26,20 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('projectsModel', function($http, monitorUrl, x3js, _, moment) {
+  .factory('projectsModel', function($http, monitorUrl, _, moment) {
     var updateAll = function(){
       var values = _.values(model.byUrl);
-      obj.all = _.flatten(values, true);
+      model.all = _.flatten(values, true);
     };
-    var setProjectStatus = function(url, builds){
-      builds.byUrl[url] = builds;
+    var setProjectsStatus = function(url, projects) {
+      model.byUrl[url] = projects;
       updateAll();
+      model.lastUpdate = moment().format('MMM, Do HH:mm:ss');
+      model.error = false;
+    };
+    var displayError = function(msg) {
+      model.error = true;
+      model.errorMessage = msg;
     };
 
     var model = {
@@ -41,7 +47,8 @@ angular.module('cimonitorApp')
       lastUpdate: '',
       error: false,
       byUrl: {},
-      setProjectStatus: setProjectStatus
+      setProjectsStatus: setProjectsStatus,
+      displayError: displayError
     };
     return model;
   });
@@ -91,34 +98,22 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, _, moment, processProjectsService) {
-
-    var obj = {
-      all: [],
-      lastUpdate: '',
-      error: false
-    };
-    var makeError = function(msg) {
-      obj.error = true;
-      obj.errorMessage = msg;
-    };
+  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, processProjectsService, projectsModel) {
     var onSuccess = function(data) {
       var jsonData = x2js.xml_str2json(data);
       var results = processProjectsService(jsonData, []);
       if (results != null) {
         /* Wraps to call $angular.$apply */
         $timeout(function(){
-          obj.lastUpdate = moment().format('MMM, Do HH:mm:ss');
-          obj.error = false;
-          obj.all = results;
+          projectsModel.setProjectsStatus('foo', results);
           //if (typeof ret.callRefresh !== "undefined" && ret.callRefresh !== null) { callRefresh(); }
         }, 100);
       } else {
-        makeError('Invalid response');
+        projectsModel.makeError('Invalid response');
       }
     };
     var onError = function(data, status, headers, config) {
-      makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
+      projectsModel.makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
       console.log('Error fetching report, got status ' + status + ' and data ' + data);
     };
 
@@ -127,7 +122,7 @@ angular.module('cimonitorApp')
         .success(onSuccess)
         .error(onError);
     };
-    var ret = {obj: obj, update: update, callRefresh: null};
+    var ret = {update: update, callRefresh: null};
 
     return ret;
   });
@@ -189,8 +184,8 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService) {
-    $scope.builds = buildFetcherService.obj;
+  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService, projectsModel) {
+    $scope.builds = projectsModel;
     buildFetcherService.callRefresh = function(){ $scope.apply(); console.log('refreshed');};
     $scope.spinning = spinningService;
     $scope.config = monitorConfig;
