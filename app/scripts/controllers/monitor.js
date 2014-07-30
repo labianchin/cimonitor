@@ -86,14 +86,18 @@ angular.module('cimonitorApp')
         var normalized = _.map(jsonData.Projects.Project, normalizeKeys);
         var filtered = filterProjects(normalized, search);
         var enhanced =_.map(filtered, function(p) {
-          p.isRecent = moment(p.lastBuildTime).add(10, 'minutes').isAfter(moment());
+          return {
+            project: p,
+            isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
+            show: true
+          };
           return p;
         });
         console.log(enhanced);
         return enhanced;
       }
     };
-    return processProjects
+    return processProjects;
   });
 
 'use strict';
@@ -185,14 +189,14 @@ angular.module('cimonitorApp')
  */
 angular.module('cimonitorApp')
   .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService, projectsModel) {
-    $scope.builds = projectsModel;
+    $scope.projects = projectsModel;
     buildFetcherService.callRefresh = function(){ $scope.apply(); console.log('refreshed');};
     $scope.spinning = spinningService;
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
     $scope.go = goService;
     $scope.updated = 1;
-    $scope.$watch('builds.all', function(newValue, oldValue) {
+    $scope.$watch('projects.all', function(newValue, oldValue) {
       if (newValue === oldValue) { return; } // AKA first run
       console.debug($scope.updated++);
     });

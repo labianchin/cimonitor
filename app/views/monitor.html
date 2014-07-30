@@ -1,18 +1,18 @@
 <div class="monitor-view">
   <div class="monitor-container container-fluid">
-    <div class="error-msg row" ng-show="builds.error">
-      {{builds.errorMessage}}
+    <div class="error-msg row" ng-show="projects.error">
+      {{projects.errorMessage}}
     </div>
-    <div class="update-info row" ng-hide="builds.error">
-      Last updated: {{builds.lastUpdate}}
+    <div class="update-info row" ng-hide="projects.error">
+      Last updated: {{projects.lastUpdate}}
     </div>
     <div class="projects-results row">
-      <div ng-repeat="b in builds.all | orderBy:['-lastBuildTime']" class="project-container col-xs-6 col-sm-4 col-lg-3">
-        <div class="project-box" ng-class="{'project-status-running': b.activity == 'Building', 'btn-success': b.lastBuildStatus == 'Success', 'btn-danger': b.lastBuildStatus == 'Failure' || b.lastBuildStatus == 'Exception', 'btn-warning': b.lastBuildStatus == 'Warning', 'btn-info': b.lastBuildStatus == 'Unknown', 'blink': b.isRecent}">
-          <a href="{{b.webUrl}}">
-            <div class="project-name">{{b.name}}</div>
-            <div class="build-label">{{b.lastBuildLabel}}</div>
-            <div class="build-time" am-time-ago="b.lastBuildTime"></div>
+      <div ng-repeat="b in projects.all | orderBy:['-lastBuildTime']" class="project-container col-xs-6 col-sm-4 col-lg-3" ng-show="b.show">
+        <div class="project-box" ng-class="{'project-status-running': b.project.activity == 'Building', 'btn-success': b.project.lastBuildStatus == 'Success', 'btn-danger': b.project.lastBuildStatus == 'Failure' || b.project.lastBuildStatus == 'Exception', 'btn-warning': b.project.lastBuildStatus == 'Warning', 'btn-info': b.project.lastBuildStatus == 'Unknown', 'blink': b.isRecent}">
+          <a href="{{b.project.webUrl}}">
+            <div class="project-name">{{b.project.name}}</div>
+            <div class="build-label">{{b.project.lastBuildLabel}}</div>
+            <div class="build-time" am-time-ago="b.project.lastBuildTime"></div>
           </a>
         </div>
       </div>
