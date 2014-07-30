@@ -100,7 +100,8 @@ angular.module('cimonitorApp')
             loading: false,
             isRunning: p.activity === 'Building',
             isSuccess: p.lastBuildStatus === 'Success',
-            isFailure: p.activity === 'Exception' || p.activity === 'Exception'
+            isFailure: p.activity === 'Exception' || p.activity === 'Exception',
+            $$hashKey: p.name
           };
           return p;
         });
