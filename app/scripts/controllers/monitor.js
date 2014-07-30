@@ -32,6 +32,8 @@ angular.module('cimonitorApp')
       model.all = _.flatten(values, true);
     };
     var setProjectsStatus = function(url, projects) {
+      //_.each(model.byUrl[url], function(p) { p.show = false; });
+      //updateAll();
       model.byUrl[url] = projects;
       updateAll();
       model.lastUpdate = moment().format('MMM, Do HH:mm:ss');
@@ -41,12 +43,17 @@ angular.module('cimonitorApp')
       model.error = true;
       model.errorMessage = msg;
     };
+    var setUrlLoading = function(url) {
+      _.each(model.byUrl[url], function(p) { p.loading = true; });
+      updateAll();
+    };
 
     var model = {
       all: [],
       lastUpdate: '',
       error: false,
       byUrl: {},
+      setUrlLoading: setUrlLoading,
       setProjectsStatus: setProjectsStatus,
       displayError: displayError
     };
@@ -89,7 +96,11 @@ angular.module('cimonitorApp')
           return {
             project: p,
             isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
-            show: true
+            show: true,
+            loading: false,
+            isRunning: p.activity === 'Building',
+            isSuccess: p.lastBuildStatus === 'Success',
+            isFailure: p.activity === 'Exception' || p.activity === 'Exception'
           };
           return p;
         });
@@ -102,7 +113,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, processProjectsService, projectsModel) {
+  .factory('buildFetcherService', function($http, $timeout, spinningService, monitorUrl, x2js, processProjectsService, projectsModel) {
     var onSuccess = function(data) {
       var jsonData = x2js.xml_str2json(data);
       var results = processProjectsService(jsonData, []);
@@ -122,9 +133,11 @@ angular.module('cimonitorApp')
     };
 
     var update = function(source) {
-      return $http.get(monitorUrl.url(source), monitorUrl.config())
+      projectsModel.setUrlLoading(source);
+      var httpPromise = $http.get(monitorUrl.url(source), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
+      return spinningService.spin(httpPromise);
     };
     var ret = {update: update, callRefresh: null};
 
@@ -147,7 +160,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('monitorConfig', function($interval, spinningService, buildFetcherService){
+  .factory('monitorConfig', function($interval, buildFetcherService){
     var addSource = function(){
       config.presets.push({});
       console.debug(config);
@@ -161,7 +174,7 @@ angular.module('cimonitorApp')
         console.log('canceling promise');
       }
       var getBuilds = function () {
-        spinningService.spin(buildFetcherService.update(config.presets[0]));
+        buildFetcherService.update(config.presets[0]);
       };
       getBuilds();
       refreshPromise = $interval(getBuilds, config.presets[0].refreshRate*1000);
