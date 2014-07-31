@@ -79,8 +79,13 @@
   color: white;
 }
 .project-name {
-  line-height: 132%;
-  font-size: 132%;
+  font-size: 150%;
+}
+.project-label{
+  font-size: 90%;
+}
+.project-time {
+	font-size: 120%;
 }
 .project-status-running {
   -webkit-animation: progress-bar-stripes 2s linear infinite;

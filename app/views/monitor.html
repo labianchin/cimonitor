@@ -11,8 +11,8 @@
         <div class="project-box" ng-class="{'project-status-running': b.project.activity == 'Building', 'btn-success': b.project.lastBuildStatus == 'Success', 'btn-danger': b.project.lastBuildStatus == 'Failure' || b.project.lastBuildStatus == 'Exception', 'btn-warning': b.project.lastBuildStatus == 'Warning', 'btn-info': b.project.lastBuildStatus == 'Unknown', 'blink': b.isRecent, 'loading': b.loading}">
           <a href="{{b.project.webUrl}}">
             <div class="project-name">{{b.project.name}}</div>
-            <div class="build-label">{{b.project.lastBuildLabel}}</div>
-            <div class="build-time" am-time-ago="b.project.lastBuildTime"></div>
+            <div class="project-label">{{b.project.lastBuildLabel}}</div>
+            <div class="project-time" am-time-ago="b.project.lastBuildTime"></div>
           </a>
         </div>
       </div>
