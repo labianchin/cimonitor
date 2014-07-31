@@ -15,7 +15,8 @@
     "angular-x2js": "~0.1.1",
     "underscore": "~1.6.0",
     "angular-underscore-module": "*",
-    "angular-moment": "~0.7.1"
+    "angular-moment": "~0.7.1",
+    "ngstorage": "~0.3.0"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

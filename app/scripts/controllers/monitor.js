@@ -117,11 +117,11 @@ angular.module('cimonitorApp')
             projectsModel.setProjectsStatus(source, results);
           }, 10);
         } else {
-          projectsModel.makeError('Invalid response');
+          projectsModel.displayError('Invalid response');
         }
       };
       var onError = function(data, status, headers, config) {
-        projectsModel.makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
+        projectsModel.displayError('Failed to fetch report for "' + config.url + '" got status ' + status);
         console.log('Error fetching report, got status ' + status + ' and data ' + data);
       };
       projectsModel.setUrlLoading(source.url);
@@ -156,7 +156,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('monitorConfig', function($interval, buildFetcherService){
+  .factory('monitorConfig', function($interval, $localStorage, buildFetcherService){
     var addSource = function(){
       config.presets.push({});
       console.debug(config);
@@ -170,10 +170,17 @@ angular.module('cimonitorApp')
         projects: 'nothing here',
         refreshRate: 20
     };
+    var defaultStorage = {
+        monitorSources: [defaultSource]
+      };
+    var resetStorage = function() {
+      $localStorage.$reset(defaultStorage);
+    };
     var config = {
-      presets: [defaultSource],
+      presets: $localStorage.$default(defaultStorage).monitorSources,
       reconfig: reconfig,
-      addSource: addSource
+      addSource: addSource,
+      reset: resetStorage
     };
     return config;
   });

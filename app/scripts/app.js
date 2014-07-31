@@ -18,7 +18,8 @@ angular
     'ngTouch',
     'underscore',
     'angularMoment',
-    'cb.x2js'
+    'cb.x2js',
+    'ngStorage'
   ])
   .config(function ($routeProvider) {
     $routeProvider
