@@ -1,20 +1,3 @@
-'use strict';
-
-angular.module('cimonitorApp')
-  .factory('monitorUrl', function() {
-    var params = {};//{app: $routeParams.app};
-    return {
-      url: function(source){
-        return source.url;
-      },
-      params: function(){
-        return params;
-      },
-      config: function() {
-        return { params: params };
-      }
-    };
-  });
 
 'use strict';
 angular.module('cimonitorApp')
@@ -26,7 +9,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('projectsModel', function($http, monitorUrl, _, moment) {
+  .factory('projectsModel', function($http, _, moment) {
     var updateAll = function(){
       var values = _.values(model.byUrl);
       model.all = _.flatten(values, true);
@@ -122,7 +105,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, processProjectsService, projectsModel) {
+  .factory('buildFetcherService', function($http, $timeout, x2js, processProjectsService, projectsModel, $interval) {
 
     var update = function(source) {
       var onSuccess = function(data) {
@@ -132,7 +115,6 @@ angular.module('cimonitorApp')
           /* Wraps to call $angular.$apply */
           $timeout(function(){
             projectsModel.setProjectsStatus(source, results);
-            //if (typeof ret.callRefresh !== "undefined" && ret.callRefresh !== null) { callRefresh(); }
           }, 10);
         } else {
           projectsModel.makeError('Invalid response');
@@ -142,13 +124,32 @@ angular.module('cimonitorApp')
         projectsModel.makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
         console.log('Error fetching report, got status ' + status + ' and data ' + data);
       };
-      projectsModel.setUrlLoading(source);
-      var httpPromise = $http.get(monitorUrl.url(source), monitorUrl.config())
+      projectsModel.setUrlLoading(source.url);
+      var httpPromise = $http.get(source.url)
         .success(onSuccess)
         .error(onError);
       return httpPromise;
     };
-    var ret = {update: update, callRefresh: null};
+    var refreshPromise = null; //should be one for source
+    var startAutoRefresh = function(source) {
+      var fetchForSource = function() {
+        update(source);
+      };
+      fetchForSource();
+      refreshPromise = $interval(fetchForSource, source.refreshRate*1000);
+      return refreshPromise;
+    };
+    var stopAutoRefresh = function() {
+      if (refreshPromise != null) {
+        $interval.cancel(refreshPromise);
+        console.log('canceling promise');
+      }
+    };
+    var ret = {
+      update: update,
+      startAutoRefresh: startAutoRefresh,
+      stopAutoRefresh: stopAutoRefresh
+    };
 
     return ret;
   });
@@ -160,19 +161,9 @@ angular.module('cimonitorApp')
       config.presets.push({});
       console.debug(config);
     };
-    var refreshPromise = null;
     var reconfig = function() {
-      console.log("config changed!!");
-      console.debug(config);
-      if (refreshPromise != null) {
-        $interval.cancel(refreshPromise);
-        console.log('canceling promise');
-      }
-      var getBuilds = function () {
-        buildFetcherService.update(config.presets[0]);
-      };
-      getBuilds();
-      refreshPromise = $interval(getBuilds, config.presets[0].refreshRate*1000);
+      buildFetcherService.stopAutoRefresh();
+      buildFetcherService.startAutoRefresh(config.presets[0]);
     };
     var defaultSource = {
         url: 'demo/cctray_sample.xml',
@@ -196,13 +187,11 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, $interval, buildFetcherService, monitorConfig, goService, projectsModel) {
+  .controller('MonitorCtrl', function ($scope, monitorConfig, goService, projectsModel) {
     $scope.projects = projectsModel;
-    buildFetcherService.callRefresh = function(){ $scope.apply(); console.log('refreshed');};
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
     $scope.go = goService;
-    $scope.updated = 1;
     //$scope.$watch('projects.all', function(newValue, oldValue) {
       //if (newValue === oldValue) { return; } // AKA first run
       //console.debug($scope.updated++);
