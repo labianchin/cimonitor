@@ -20,8 +20,6 @@ angular.module('cimonitorApp')
       //}
     };
     var setProjectsStatus = function(url, projects) {
-      //_.each(model.byUrl[url], function(p) { p.show = false; });
-      //updateAll();
       model.byUrl[url] = projects;
       updateAll();
       model.lastUpdate = moment().format('MMM, Do HH:mm:ss');
@@ -105,17 +103,14 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, $timeout, x2js, processProjectsService, projectsModel, $interval) {
+  .factory('buildFetcherService', function($http, x2js, processProjectsService, projectsModel, $interval) {
 
     var update = function(source) {
       var onSuccess = function(data) {
         var jsonData = x2js.xml_str2json(data);
         var results = processProjectsService(jsonData, []);
         if (results != null) {
-          /* Wraps to call $angular.$apply */
-          $timeout(function(){
-            projectsModel.setProjectsStatus(source, results);
-          }, 10);
+          projectsModel.setProjectsStatus(source.url, results);
         } else {
           projectsModel.displayError('Invalid response');
         }
@@ -130,25 +125,30 @@ angular.module('cimonitorApp')
         .error(onError);
       return httpPromise;
     };
-    var refreshPromise = null; //should be one for source
-    var startAutoRefresh = function(source) {
-      var fetchForSource = function() {
-        update(source);
-      };
-      fetchForSource();
-      refreshPromise = $interval(fetchForSource, source.refreshRate*1000);
-      return refreshPromise;
+    var callAndKeppTrack = function(fn, delay) {
+      fn();
+      refreshPromises.push( $interval(fn, delay*1000) );
+    };
+    var refreshPromises = []; //should be one for source
+    var startAutoRefresh = function(sources) {
+      stopAutoRefresh();
+      for (var i in sources) {
+        var source = sources[i];
+        callAndKeppTrack(function() {
+            update(source);
+          }, source.refreshRate);
+      }
     };
     var stopAutoRefresh = function() {
-      if (refreshPromise != null) {
-        $interval.cancel(refreshPromise);
+      for (var i in refreshPromises) {
+        $interval.cancel(refreshPromises[i]);
         console.log('canceling promise');
       }
+      refreshPromises = [];
     };
     var ret = {
       update: update,
-      startAutoRefresh: startAutoRefresh,
-      stopAutoRefresh: stopAutoRefresh
+      startAutoRefresh: startAutoRefresh
     };
 
     return ret;
@@ -156,14 +156,12 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('monitorConfig', function($interval, $localStorage, buildFetcherService){
+  .factory('monitorConfig', function($localStorage, buildFetcherService){
     var addSource = function(){
       config.presets.push({});
-      console.debug(config);
     };
     var reconfig = function() {
-      buildFetcherService.stopAutoRefresh();
-      buildFetcherService.startAutoRefresh(config.presets[0]);
+      buildFetcherService.startAutoRefresh(config.presets);
     };
     var defaultSource = {
         url: 'demo/cctray_sample.xml',
