@@ -105,7 +105,7 @@ angular.module('cimonitorApp')
           };
           return p;
         });
-        console.log(enhanced);
+        //console.log(enhanced);
         return enhanced;
       }
     };
@@ -210,8 +210,8 @@ angular.module('cimonitorApp')
     monitorConfig.reconfig();
     $scope.go = goService;
     $scope.updated = 1;
-    $scope.$watch('projects.all', function(newValue, oldValue) {
-      if (newValue === oldValue) { return; } // AKA first run
-      console.debug($scope.updated++);
-    });
+    //$scope.$watch('projects.all', function(newValue, oldValue) {
+      //if (newValue === oldValue) { return; } // AKA first run
+      //console.debug($scope.updated++);
+    //});
   });
