@@ -174,7 +174,7 @@ angular.module('cimonitorApp')
         monitorSources: [defaultSource]
       };
     var resetStorage = function() {
-      $localStorage.$reset(defaultStorage);
+      config.presets = $localStorage.$reset(defaultStorage).monitorSources;
     };
     var config = {
       presets: $localStorage.$default(defaultStorage).monitorSources,
