@@ -27,6 +27,7 @@
         <a href="#/monitor" class="btn btn-default">OK</a>
         <button ng-click="config.reset()" class="btn btn-default">Reset</button>
         <button ng-click="config.download()" class="btn btn-default">Save</button>
+<input type="file" id="file" name="file" ng-hide="true" onchange="angular.element(this).scope().config.upload(this, angular.element(this).scope())" />
       </form>
     </div>
   </div>

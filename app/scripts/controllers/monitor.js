@@ -171,18 +171,34 @@ angular.module('cimonitorApp')
     var defaultStorage = {
         monitorSources: [defaultSource]
       };
+    var setStorageTo = function(sources) {
+      config.presets = $localStorage.$reset({monitorSources: sources}).monitorSources;
+    };
     var resetStorage = function() {
-      config.presets = $localStorage.$reset(defaultStorage).monitorSources;
+      setStorageTo([defaultSource]);
     };
     var download = function() {
       var url = 'data:plain/text,' + angular.toJson(config.presets);
       window.location.href = url;
+    };
+    var upload = function(el, $scope) {
+      var file = el.files[0];
+      console.debug(file);
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        console.debug(e.target.result);
+        var parsed = angular.fromJson(e.target.result);
+        setStorageTo(parsed);
+        console.debug(parsed);
+      };
+      reader.readAsText(file);
     };
     var config = {
       presets: $localStorage.$default(defaultStorage).monitorSources,
       reconfig: reconfig,
       addSource: addSource,
       download: download,
+      upload: upload,
       reset: resetStorage
     };
     return config;
