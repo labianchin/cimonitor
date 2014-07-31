@@ -87,6 +87,9 @@
 .project-time {
 	font-size: 120%;
 }
+.loading {
+	opacity: 0.5;
+}
 .project-status-running {
   -webkit-animation: progress-bar-stripes 2s linear infinite;
   background-image: linear-gradient(45deg,rgba(255,255,255,.3) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.3) 75%,transparent 75%,transparent);
@@ -101,20 +104,14 @@
   background-size: 40px 40px;
 }
 
-.spinner {
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:1000;
-  background-color: grey;
-  opacity: .4;
+.loading-img {
+  height: 22px;
+  width: 22px;
 }
 .center {
-    text-align:center;
+  text-align:center;
 }
 
 .center form {
-    display:inline-block;
+  display:inline-block;
 }

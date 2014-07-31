@@ -30,6 +30,11 @@ angular.module('cimonitorApp')
     var updateAll = function(){
       var values = _.values(model.byUrl);
       model.all = _.flatten(values, true);
+      //for (var url in model.byUrl) {
+        //for (var p in model.byUrl[url]) {
+          //model.all.push(p);
+        //}
+      //}
     };
     var setProjectsStatus = function(url, projects) {
       //_.each(model.byUrl[url], function(p) { p.show = false; });
@@ -38,6 +43,7 @@ angular.module('cimonitorApp')
       updateAll();
       model.lastUpdate = moment().format('MMM, Do HH:mm:ss');
       model.error = false;
+      model.loading = false; // unset gloabl loading
     };
     var displayError = function(msg) {
       model.error = true;
@@ -45,7 +51,8 @@ angular.module('cimonitorApp')
     };
     var setUrlLoading = function(url) {
       _.each(model.byUrl[url], function(p) { p.loading = true; });
-      updateAll();
+      model.loading = true; //set gloabl loading
+      //updateAll();
     };
 
     var model = {
@@ -53,6 +60,7 @@ angular.module('cimonitorApp')
       lastUpdate: '',
       error: false,
       byUrl: {},
+      loading: false,
       setUrlLoading: setUrlLoading,
       setProjectsStatus: setProjectsStatus,
       displayError: displayError
@@ -114,49 +122,35 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, $timeout, spinningService, monitorUrl, x2js, processProjectsService, projectsModel) {
-    var onSuccess = function(data) {
-      var jsonData = x2js.xml_str2json(data);
-      var results = processProjectsService(jsonData, []);
-      if (results != null) {
-        /* Wraps to call $angular.$apply */
-        $timeout(function(){
-          projectsModel.setProjectsStatus('foo', results);
-          //if (typeof ret.callRefresh !== "undefined" && ret.callRefresh !== null) { callRefresh(); }
-        }, 100);
-      } else {
-        projectsModel.makeError('Invalid response');
-      }
-    };
-    var onError = function(data, status, headers, config) {
-      projectsModel.makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
-      console.log('Error fetching report, got status ' + status + ' and data ' + data);
-    };
+  .factory('buildFetcherService', function($http, $timeout, monitorUrl, x2js, processProjectsService, projectsModel) {
 
     var update = function(source) {
+      var onSuccess = function(data) {
+        var jsonData = x2js.xml_str2json(data);
+        var results = processProjectsService(jsonData, []);
+        if (results != null) {
+          /* Wraps to call $angular.$apply */
+          $timeout(function(){
+            projectsModel.setProjectsStatus(source, results);
+            //if (typeof ret.callRefresh !== "undefined" && ret.callRefresh !== null) { callRefresh(); }
+          }, 10);
+        } else {
+          projectsModel.makeError('Invalid response');
+        }
+      };
+      var onError = function(data, status, headers, config) {
+        projectsModel.makeError('Failed to fetch report for "' + config.url + '" got status ' + status);
+        console.log('Error fetching report, got status ' + status + ' and data ' + data);
+      };
       projectsModel.setUrlLoading(source);
       var httpPromise = $http.get(monitorUrl.url(source), monitorUrl.config())
         .success(onSuccess)
         .error(onError);
-      return spinningService.spin(httpPromise);
+      return httpPromise;
     };
     var ret = {update: update, callRefresh: null};
 
     return ret;
-  });
-
-'use strict';
-angular.module('cimonitorApp')
-  .factory('spinningService', function(){
-    var obj = {loading: false};
-    obj.spin = function(promise) {
-      obj.loading = true;
-      var end = function() {
-        obj.loading = false;
-      };
-      promise.then(end, end);
-    }
-    return obj;
   });
 
 'use strict';
@@ -202,10 +196,9 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, $interval, spinningService, buildFetcherService, monitorConfig, goService, projectsModel) {
+  .controller('MonitorCtrl', function ($scope, $interval, buildFetcherService, monitorConfig, goService, projectsModel) {
     $scope.projects = projectsModel;
     buildFetcherService.callRefresh = function(){ $scope.apply(); console.log('refreshed');};
-    $scope.spinning = spinningService;
     $scope.config = monitorConfig;
     monitorConfig.reconfig();
     $scope.go = goService;
