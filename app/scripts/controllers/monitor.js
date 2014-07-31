@@ -156,7 +156,7 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('monitorConfig', function($localStorage, buildFetcherService){
+  .factory('monitorConfig', function($localStorage, buildFetcherService, goService){
     var addSource = function(){
       config.presets.push({});
     };
@@ -174,10 +174,15 @@ angular.module('cimonitorApp')
     var resetStorage = function() {
       config.presets = $localStorage.$reset(defaultStorage).monitorSources;
     };
+    var download = function() {
+      var url = 'data:plain/text,' + angular.toJson(config.presets);
+      window.location.href = url;
+    };
     var config = {
       presets: $localStorage.$default(defaultStorage).monitorSources,
       reconfig: reconfig,
       addSource: addSource,
+      download: download,
       reset: resetStorage
     };
     return config;

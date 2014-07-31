@@ -39,4 +39,12 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  });
+  })
+  .config( [
+      '$compileProvider',
+      function( $compileProvider )
+      {   
+          $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|data):/);
+          // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+      }
+  ]);
