@@ -65,39 +65,44 @@ angular.module('cimonitorApp')
     var undefinedOrNull = function(val) {
       return angular.isUndefined(val) || val === null;
     };
-    var filterProjects = function(all, search) {
+    var buildPredicate = function(search) {
       if(search.length > 0) {
-        return _.filter(all, function(p){
+        return function(p) {
           return _.contains(search, p.name);
-        });
+        };
       } else { // no filter
-        return all;
+        return function() { return true; };
       }
+
     };
-    var processProjects = function(jsonData, search){
+    var processProjects = function(jsonData, predicate){
       if (undefinedOrNull(jsonData) || undefinedOrNull(jsonData.Projects) || undefinedOrNull(jsonData.Projects.Project)){
         return null;
       } else {
-        var normalized = _.map(jsonData.Projects.Project, normalizeKeys);
-        var filtered = filterProjects(normalized, search);
-        var enhanced =_.map(filtered, function(p) {
-          return {
-            project: p,
-            isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
-            show: true,
-            loading: false,
-            isRunning: p.activity === 'Building',
-            isSuccess: p.lastBuildStatus === 'Success',
-            isFailure: p.activity === 'Exception' || p.activity === 'Exception',
-            $$hashKey: p.name+p.lastBuildTime
-          };
-          return p;
-        });
-        //console.log(enhanced);
-        return enhanced;
+        var vals =  _.chain(jsonData.Projects.Project)
+          .map(normalizeKeys)
+          .filter(predicate)
+          .map(function(p) {
+            return {
+              project: p,
+              isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
+              show: true,
+              loading: false,
+              isRunning: p.activity === 'Building',
+              isSuccess: p.lastBuildStatus === 'Success',
+              isFailure: p.activity === 'Exception' || p.activity === 'Exception',
+              $$hashKey: p.name+p.lastBuildTime
+            };
+        }).value();
+        return vals;
       }
     };
-    return processProjects;
+    return function(search) {
+      var predicate = buildPredicate(search);
+      return function(jsonData) {
+        return processProjects(jsonData, predicate);
+      };
+    };
   });
 
 'use strict';
@@ -105,9 +110,10 @@ angular.module('cimonitorApp')
   .factory('monitorFetcherService', function($http, x2js, processProjectsService, projectsModel, monitorConfig, $interval) {
 
     var updateSource = function(source) {
+      var processProjects = processProjectsService(source.projects);
       var onSuccess = function(data) {
         var jsonData = x2js.xml_str2json(data);
-        var results = processProjectsService(jsonData, source.projects);
+        var results = processProjects(jsonData);
         if (results !== null) {
           projectsModel.setProjectsStatus(source.url, results);
         } else {
