@@ -17,6 +17,7 @@
               <div class="form-group">
                 <label>Projects</label>
                 <input type="text" class="form-control" ng-model="source.projects[$index]" />
+                <button ng-click="source.projects.splice($index)" class="btn btn-default">Remove</button>
               </div>
             </div>
             <button ng-click="source.projects.push('')" class="btn btn-default">Add project</button>

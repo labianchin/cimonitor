@@ -10,14 +10,13 @@ angular.module('cimonitorApp')
 'use strict';
 angular.module('cimonitorApp')
   .factory('projectsModel', function($http, _, moment) {
-    var updateAll = function(){
+    var updateAll = function() {
+      model.all.length = 0; //clear model
       var values = _.values(model.byUrl);
-      model.all = _.flatten(values, true);
-      //for (var url in model.byUrl) {
-        //for (var p in model.byUrl[url]) {
-          //model.all.push(p);
-        //}
-      //}
+      var flatten = _.flatten(values, true);
+      _.each(flatten, function(p) {
+        model.all.push(p);
+      });
     };
     var setProjectsStatus = function(url, projects) {
       model.byUrl[url] = projects;
