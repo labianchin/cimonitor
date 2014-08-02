@@ -103,12 +103,12 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('buildFetcherService', function($http, x2js, processProjectsService, projectsModel, $interval) {
+  .factory('monitorFetcherService', function($http, x2js, processProjectsService, projectsModel, monitorConfig, $interval) {
 
-    var update = function(source) {
+    var updateSource = function(source) {
       var onSuccess = function(data) {
         var jsonData = x2js.xml_str2json(data);
-        var results = processProjectsService(jsonData, []);
+        var results = processProjectsService(jsonData, source.projects);
         if (results != null) {
           projectsModel.setProjectsStatus(source.url, results);
         } else {
@@ -125,26 +125,27 @@ angular.module('cimonitorApp')
         .error(onError);
       return httpPromise;
     };
-    var callAndKeepTrack = function(fn, delay) {
-      fn();
-    };
-    var refreshPromise = [];
-    var startAutoRefresh = function(config) {
+    var refreshPromise = null;
+    var stop = function() {
       if (refreshPromise !== null) {
         $interval.cancel(refreshPromise);
       }
+      refreshPromise = null;
+    }
+    var start = function() {
+      var sources = monitorConfig.config.sources;
+      var refreshInterval = monitorConfig.config.refreshInterval*1000;
       var refreshFn = function() {
-        for (var i in config.sources) {
-          var source = config.sources[i];
-          update(source);
+        for (var i in sources) {
+          updateSource(sources[i]);
         }
       }
-      refreshPromise = $interval(refreshFn, config.refreshInterval*1000);
+      refreshPromise = $interval(refreshFn, refreshInterval);
       refreshFn();
     };
     var ret = {
-      update: update,
-      startAutoRefresh: startAutoRefresh
+      start: start,
+      stop: stop
     };
 
     return ret;
@@ -152,19 +153,16 @@ angular.module('cimonitorApp')
 
 'use strict';
 angular.module('cimonitorApp')
-  .factory('monitorConfig', function($localStorage, buildFetcherService, goService){
+  .factory('monitorConfig', function($localStorage){
     var addSource = function(){
-      obj.config.sources.push({});
-    };
-    var start = function() {
-      buildFetcherService.startAutoRefresh(obj.config);
+      obj.config.sources.push({url: '', projects: []});
     };
     var defaultConfig = {
       monitorConfig: {
         refreshInterval: 20,
         sources: [{
           url: 'demo/cctray_sample.xml',
-          projects: 'nothing here'
+          projects: []
         }]
       }
     };
@@ -192,7 +190,6 @@ angular.module('cimonitorApp')
     };
     var obj = {
       config: $localStorage.$default(defaultConfig).monitorConfig,
-      start: start,
       addSource: addSource,
       download: download,
       upload: upload,
@@ -210,10 +207,10 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, monitorConfig, goService, projectsModel) {
+  .controller('MonitorCtrl', function ($scope, monitorConfig, monitorFetcherService, goService, projectsModel) {
     $scope.projects = projectsModel;
     $scope.config = monitorConfig;
-    monitorConfig.start();
+    monitorFetcherService.start();
     $scope.go = goService;
     //$scope.$watch('projects.all', function(newValue, oldValue) {
       //if (newValue === oldValue) { return; } // AKA first run
