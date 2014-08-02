@@ -108,7 +108,7 @@ angular.module('cimonitorApp')
       var onSuccess = function(data) {
         var jsonData = x2js.xml_str2json(data);
         var results = processProjectsService(jsonData, source.projects);
-        if (results != null) {
+        if (results !== null) {
           projectsModel.setProjectsStatus(source.url, results);
         } else {
           projectsModel.displayError('Invalid response');
@@ -131,7 +131,7 @@ angular.module('cimonitorApp')
         $interval.cancel(refreshPromise);
       }
       refreshPromise = null;
-    }
+    };
     var start = function() {
       var sources = monitorConfig.config.sources;
       var refreshInterval = monitorConfig.config.refreshInterval*1000;
@@ -139,7 +139,7 @@ angular.module('cimonitorApp')
         for (var i in sources) {
           updateSource(sources[i]);
         }
-      }
+      };
       refreshPromise = $interval(refreshFn, refreshInterval);
       refreshFn();
     };
@@ -212,7 +212,7 @@ angular.module('cimonitorApp')
     $scope.config = monitorConfig;
     monitorFetcherService.start();
     $scope.go = goService;
-    $scope.$on('$locationChangeStart', function(event) {
+    $scope.$on('$locationChangeStart', function() {
       monitorFetcherService.stop();
     });
     //$scope.$watch('projects.all', function(newValue, oldValue) {
