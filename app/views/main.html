@@ -8,12 +8,14 @@
     <div class="col-md-8 col-md-offset-2">
       <form role="form" novalidate class="simple-form">
         <div ng-repeat="source in config.config.sources">
+          <h3>Source {{$index + 1}}</h3>
           <fieldset>
             <div class="form-group">
               <label for="monitorSource{{$index}}Url">URL</label>
               <input type="text" id="monitorSource{{$index}}Url" class="form-control" ng-model="source.url" />
             </div>
             <div ng-repeat="project in source.projects track by $index">
+              <h4>Selected projects {{$index + 1}}</h4>
               <div class="form-group">
                 <label>Projects</label>
                 <input type="text" class="form-control" ng-model="source.projects[$index]" />
@@ -24,6 +26,7 @@
           </fieldset>
         </div>
         </hr>
+        <h3>Advanced Configuration</h3>
         <div class="form-group">
           <label for="monitorConfigRefresh">Refresh Interval (seconds)</label>
           <input type="text" id="monitorConfigRefresh" class="form-control" ng-model="config.config.refreshInterval" />
