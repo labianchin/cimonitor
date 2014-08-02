@@ -125,26 +125,22 @@ angular.module('cimonitorApp')
         .error(onError);
       return httpPromise;
     };
-    var callAndKeppTrack = function(fn, delay) {
+    var callAndKeepTrack = function(fn, delay) {
       fn();
-      refreshPromises.push( $interval(fn, delay*1000) );
     };
-    var refreshPromises = []; //should be one for source
-    var startAutoRefresh = function(sources) {
-      stopAutoRefresh();
-      for (var i in sources) {
-        var source = sources[i];
-        callAndKeppTrack(function() {
-            update(source);
-          }, source.refreshRate);
+    var refreshPromise = [];
+    var startAutoRefresh = function(config) {
+      if (refreshPromise !== null) {
+        $interval.cancel(refreshPromise);
       }
-    };
-    var stopAutoRefresh = function() {
-      for (var i in refreshPromises) {
-        $interval.cancel(refreshPromises[i]);
-        console.log('canceling promise');
+      var refreshFn = function() {
+        for (var i in config.sources) {
+          var source = config.sources[i];
+          update(source);
+        }
       }
-      refreshPromises = [];
+      refreshPromise = $interval(refreshFn, config.refreshInterval*1000);
+      refreshFn();
     };
     var ret = {
       update: update,
@@ -158,27 +154,28 @@ angular.module('cimonitorApp')
 angular.module('cimonitorApp')
   .factory('monitorConfig', function($localStorage, buildFetcherService, goService){
     var addSource = function(){
-      config.presets.push({});
+      obj.config.sources.push({});
     };
-    var reconfig = function() {
-      buildFetcherService.startAutoRefresh(config.presets);
+    var start = function() {
+      buildFetcherService.startAutoRefresh(obj.config);
     };
-    var defaultSource = {
-        url: 'demo/cctray_sample.xml',
-        projects: 'nothing here',
-        refreshRate: 20
+    var defaultConfig = {
+      monitorConfig: {
+        refreshInterval: 20,
+        sources: [{
+          url: 'demo/cctray_sample.xml',
+          projects: 'nothing here'
+        }]
+      }
     };
-    var defaultStorage = {
-        monitorSources: [defaultSource]
-      };
-    var setStorageTo = function(sources) {
-      config.presets = $localStorage.$reset({monitorSources: sources}).monitorSources;
+    var setStorageTo = function(config) {
+      obj.config = $localStorage.$reset(config).monitorConfig;
     };
     var resetStorage = function() {
-      setStorageTo([defaultSource]);
+      setStorageTo(defaultConfig);
     };
     var download = function() {
-      var url = 'data:plain/text,' + angular.toJson(config.presets);
+      var url = 'data:plain/text,' + angular.toJson({monitorConfig: obj.config});
       window.location.href = url;
     };
     var upload = function(el, $scope) {
@@ -193,15 +190,15 @@ angular.module('cimonitorApp')
       };
       reader.readAsText(file);
     };
-    var config = {
-      presets: $localStorage.$default(defaultStorage).monitorSources,
-      reconfig: reconfig,
+    var obj = {
+      config: $localStorage.$default(defaultConfig).monitorConfig,
+      start: start,
       addSource: addSource,
       download: download,
       upload: upload,
       reset: resetStorage
     };
-    return config;
+    return obj;
   });
 
 'use strict';
@@ -216,7 +213,7 @@ angular.module('cimonitorApp')
   .controller('MonitorCtrl', function ($scope, monitorConfig, goService, projectsModel) {
     $scope.projects = projectsModel;
     $scope.config = monitorConfig;
-    monitorConfig.reconfig();
+    monitorConfig.start();
     $scope.go = goService;
     //$scope.$watch('projects.all', function(newValue, oldValue) {
       //if (newValue === oldValue) { return; } // AKA first run
