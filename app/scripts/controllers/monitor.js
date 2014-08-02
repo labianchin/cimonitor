@@ -128,6 +128,7 @@ angular.module('cimonitorApp')
     var refreshPromise = null;
     var stop = function() {
       if (refreshPromise !== null) {
+        console.debug('canceling promise');
         $interval.cancel(refreshPromise);
       }
       refreshPromise = null;
@@ -212,6 +213,9 @@ angular.module('cimonitorApp')
     $scope.config = monitorConfig;
     monitorFetcherService.start();
     $scope.go = goService;
+    $scope.$on('$locationChangeStart', function(event) {
+      monitorFetcherService.stop();
+    });
     //$scope.$watch('projects.all', function(newValue, oldValue) {
       //if (newValue === oldValue) { return; } // AKA first run
       //console.debug($scope.updated++);
