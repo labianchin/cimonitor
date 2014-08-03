@@ -166,6 +166,8 @@ angular.module('cimonitorApp')
     var defaultConfig = {
       monitorConfig: {
         refreshInterval: 20,
+        soundSuccess: 'audio/success.mp3',
+        soundFailure: 'audio/failure.mp3',
         sources: [{
           url: 'demo/cctray_sample.xml',
           projects: []

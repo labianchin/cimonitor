@@ -36,6 +36,14 @@
           <label for="monitorConfigRefresh">Refresh Interval (seconds)</label>
           <input type="text" id="monitorConfigRefresh" class="form-control" ng-model="config.config.refreshInterval" />
         </div>
+        <div class="form-group" ng-hide="true">
+          <label for="monitorConfigSoundSuccess">Sound for successful build</label>
+          <input type="text" id="monitorConfigSoundSuccess" class="form-control" ng-model="config.config.soundSuccess" />
+        </div>
+        <div class="form-group" ng-hide="true">
+          <label for="monitorConfigSoundFailure">Sound for broken build</label>
+          <input type="text" id="monitorConfigSoundFailure" class="form-control" ng-model="config.config.soundFailure" />
+        </div>
         <a href="#/monitor" class="btn btn-default">OK</a>
         <button ng-click="config.addSource()" class="btn btn-default">Add new source</button>
         <button ng-click="config.reset()" class="btn btn-default">Reset</button>
