@@ -14,12 +14,15 @@
               <label for="monitorSource{{$index}}Url">URL</label>
               <input type="text" id="monitorSource{{$index}}Url" class="form-control" ng-model="source.url" />
             </div>
-            <div ng-repeat="project in source.projects track by $index">
-              <h4>Selected projects {{$index + 1}}</h4>
-              <div class="form-group">
-                <label>Projects</label>
-                <input type="text" class="form-control" ng-model="source.projects[$index]" />
-                <button ng-click="source.projects.splice($index)" class="btn btn-default">Remove</button>
+            <div class="form-group">
+              <label>Selected projects</label>
+              <div ng-repeat="project in source.projects track by $index">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="source.projects[$index]" />
+                  <span class="input-group-btn">
+                    <button ng-click="source.projects.splice($index)" class="btn btn-default">Remove</button>
+                  </span>
+                </div>
               </div>
             </div>
             <button ng-click="source.projects.push('')" class="btn btn-default">Add project</button>
