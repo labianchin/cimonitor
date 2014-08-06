@@ -5,15 +5,13 @@ angular.module('cimonitorApp')
     return function(path) {
       $location.path(path);
     };
-  }]);
-
-'use strict';
-angular.module('cimonitorApp')
+  }])
   .factory('projectsModel', function($http, _, moment) {
-    var cleanAll() {
+    var cleanAll = function() {
       model.all.length = 0; //clear model
     };
     var updateAll = function() {
+      cleanAll();
       var values = _.values(model.byUrl);
       var flatten = _.flatten(values, true);
       _.each(flatten, function(p) {
@@ -52,10 +50,7 @@ angular.module('cimonitorApp')
       reset: reset
     };
     return model;
-  });
-
-'use strict';
-angular.module('cimonitorApp')
+  })
   .factory('processProjectsService', function(_, moment) {
     var normalizeKeys = function(p) {
       for (var f in p) {
@@ -96,7 +91,8 @@ angular.module('cimonitorApp')
               loading: false,
               isRunning: p.activity === 'Building',
               isSuccess: p.lastBuildStatus === 'Success',
-              isFailure: p.activity === 'Exception' || p.activity === 'Exception'
+              isWarning: p.lastBuildStatus === 'Warning',
+              isFailure: (p.lastBuildStatus === 'Failure') || (p.lastBuildStatus === 'Exception') || (p.lastBuildStatus === 'Error')
               //$$hashKey: p.name+p.lastBuildTime
             };
         }).value();
@@ -109,10 +105,7 @@ angular.module('cimonitorApp')
         return processProjects(jsonData, predicate);
       };
     };
-  });
-
-'use strict';
-angular.module('cimonitorApp')
+  })
   .factory('monitorFetcherService', function($http, x2js, processProjectsService, projectsModel, monitorConfig, $interval) {
 
     var updateSource = function(source) {
@@ -162,10 +155,7 @@ angular.module('cimonitorApp')
     };
 
     return ret;
-  });
-
-'use strict';
-angular.module('cimonitorApp')
+  })
   .factory('monitorConfig', function($localStorage){
     var addSource = function(){
       obj.config.sources.push({url: '', projects: []});
@@ -191,7 +181,7 @@ angular.module('cimonitorApp')
       var url = 'data:plain/text,' + angular.toJson({monitorConfig: obj.config});
       window.location.href = url;
     };
-    var upload = function(el, $scope) {
+    var upload = function(el) {
       var file = el.files[0];
       console.debug(file);
       var reader = new FileReader();
