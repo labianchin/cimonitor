@@ -10,8 +10,10 @@ angular.module('cimonitorApp')
 'use strict';
 angular.module('cimonitorApp')
   .factory('projectsModel', function($http, _, moment) {
-    var updateAll = function() {
+    var cleanAll() {
       model.all.length = 0; //clear model
+    };
+    var updateAll = function() {
       var values = _.values(model.byUrl);
       var flatten = _.flatten(values, true);
       _.each(flatten, function(p) {
@@ -32,7 +34,10 @@ angular.module('cimonitorApp')
     var setUrlLoading = function(url) {
       _.each(model.byUrl[url], function(p) { p.loading = true; });
       model.loading = true; //set gloabl loading
-      //updateAll();
+    };
+    var reset = function() {
+      model.byUrl = {};
+      cleanAll();
     };
 
     var model = {
@@ -43,7 +48,8 @@ angular.module('cimonitorApp')
       loading: false,
       setUrlLoading: setUrlLoading,
       setProjectsStatus: setProjectsStatus,
-      displayError: displayError
+      displayError: displayError,
+      reset: reset
     };
     return model;
   });
@@ -90,8 +96,8 @@ angular.module('cimonitorApp')
               loading: false,
               isRunning: p.activity === 'Building',
               isSuccess: p.lastBuildStatus === 'Success',
-              isFailure: p.activity === 'Exception' || p.activity === 'Exception',
-              $$hashKey: p.name+p.lastBuildTime
+              isFailure: p.activity === 'Exception' || p.activity === 'Exception'
+              //$$hashKey: p.name+p.lastBuildTime
             };
         }).value();
         return vals;
@@ -137,6 +143,7 @@ angular.module('cimonitorApp')
         $interval.cancel(refreshPromise);
       }
       refreshPromise = null;
+      projectsModel.reset();
     };
     var start = function() {
       var sources = monitorConfig.config.sources;
