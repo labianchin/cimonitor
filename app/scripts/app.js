@@ -36,6 +36,10 @@ angular
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
+      .when('/export', {
+        templateUrl: 'views/export.html',
+        controller: 'ExportCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

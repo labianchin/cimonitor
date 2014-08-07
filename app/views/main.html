@@ -44,11 +44,10 @@
           <label for="monitorConfigSoundFailure">Sound for broken build</label>
           <input type="text" id="monitorConfigSoundFailure" class="form-control" ng-model="config.config.soundFailure" />
         </div>
-        <a href="#/monitor" class="btn btn-default">OK</a>
+        <a href="#/monitor" class="btn btn-default">Go to monitor</a>
         <button ng-click="config.addSource()" class="btn btn-default">Add new source</button>
         <button ng-click="config.reset()" class="btn btn-default">Reset</button>
-        <button ng-click="config.download()" class="btn btn-default">Save</button>
-        <input type="file" id="file" name="file" ng-hide="true" onchange="angular.element(this).scope().config.upload(this, angular.element(this).scope())" />
+        <a href="#/export" class="btn btn-default">Export</a>
       </form>
     </div>
   </div>

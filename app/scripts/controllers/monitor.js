@@ -190,20 +190,12 @@ angular.module('cimonitorApp')
       setStorageTo(defaultConfig);
     };
     var download = function() {
-      var url = 'data:plain/text,' + angular.toJson({monitorConfig: obj.config});
-      window.location.href = url;
+      return angular.toJson({monitorConfig: obj.config}, true);
     };
-    var upload = function(el) {
-      var file = el.files[0];
-      console.debug(file);
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        console.debug(e.target.result);
-        var parsed = angular.fromJson(e.target.result);
-        setStorageTo(parsed);
-        console.debug(parsed);
-      };
-      reader.readAsText(file);
+    var upload = function(str) {
+      var parsed = angular.fromJson(str);
+      setStorageTo(parsed);
+      console.debug(parsed);
     };
     var obj = {
       config: $localStorage.$default(defaultConfig).monitorConfig,
