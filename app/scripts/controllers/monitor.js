@@ -1,4 +1,3 @@
-
 'use strict';
 angular.module('cimonitorApp')
   .factory('goService', ['$location', function($location) {
@@ -6,7 +5,10 @@ angular.module('cimonitorApp')
       $location.path(path);
     };
   }])
-  .factory('projectsModel', function($http, _, moment) {
+;
+
+angular.module('cimonitorApp')
+  .factory('projectsModel', ['$http', '_', 'moment', function($http, _, moment) {
     var cleanAll = function() {
       model.all.length = 0; //clear model
     };
@@ -50,8 +52,11 @@ angular.module('cimonitorApp')
       reset: reset
     };
     return model;
-  })
-  .factory('processProjectsService', function(_, moment) {
+  }])
+;
+
+angular.module('cimonitorApp')
+  .factory('processProjectsService', ['_', 'moment', function(_, moment) {
     var normalizeKeys = function(p) {
       for (var f in p) {
         if (p.hasOwnProperty(f)) {
@@ -105,8 +110,12 @@ angular.module('cimonitorApp')
         return processProjects(jsonData, predicate);
       };
     };
-  })
-  .factory('monitorFetcherService', function($http, x2js, processProjectsService, projectsModel, monitorConfig, $interval) {
+  }])
+;
+
+angular.module('cimonitorApp')
+  .factory('monitorFetcherService', ['$http', 'x2js', 'processProjectsService', 'projectsModel', 'monitorConfig', '$interval',
+  function($http, x2js, processProjectsService, projectsModel, monitorConfig, $interval) {
 
     var updateSource = function(source) {
       var processProjects = processProjectsService(source.projects);
@@ -155,8 +164,11 @@ angular.module('cimonitorApp')
     };
 
     return ret;
-  })
-  .factory('monitorConfig', function($localStorage){
+  }])
+;
+
+angular.module('cimonitorApp')
+  .factory('monitorConfig', ['$localStorage', function($localStorage){
     var addSource = function(){
       obj.config.sources.push({url: '', projects: []});
     };
@@ -201,7 +213,7 @@ angular.module('cimonitorApp')
       reset: resetStorage
     };
     return obj;
-  });
+  }]);
 
 'use strict';
 /**
@@ -212,16 +224,17 @@ angular.module('cimonitorApp')
  * Controller of the ciMonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MonitorCtrl', function ($scope, monitorConfig, monitorFetcherService, goService, projectsModel) {
-    $scope.projects = projectsModel;
-    $scope.config = monitorConfig;
-    monitorFetcherService.start();
-    $scope.go = goService;
-    $scope.$on('$locationChangeStart', function() {
-      monitorFetcherService.stop();
-    });
-    //$scope.$watch('projects.all', function(newValue, oldValue) {
+  .controller('MonitorCtrl', ['$scope', 'monitorConfig', 'monitorFetcherService', 'goService', 'projectsModel',
+    function ($scope, monitorConfig, monitorFetcherService, goService, projectsModel) {
+      $scope.projects = projectsModel;
+      $scope.config = monitorConfig;
+      monitorFetcherService.start();
+      $scope.go = goService;
+      $scope.$on('$locationChangeStart', function() {
+        monitorFetcherService.stop();
+      });
+      //$scope.$watch('projects.all', function(newValue, oldValue) {
       //if (newValue === oldValue) { return; } // AKA first run
       //console.debug($scope.updated++);
-    //});
-  });
+      //});
+    }]);
