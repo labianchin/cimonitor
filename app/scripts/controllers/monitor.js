@@ -15,9 +15,10 @@ angular.module('cimonitorApp')
     var updateAll = function() {
       cleanAll();
       var values = _.values(model.byUrl);
-      var flatten = _.flatten(values, true);
-      _.each(flatten, function(p) {
-        model.all.push(p);
+      _.each(values, function(u) {
+        _.each(_.values(u), function(ps) {
+          model.all.push(ps[0]);
+        });
       });
     };
     var setProjectsStatus = function(url, projects) {
@@ -91,6 +92,7 @@ angular.module('cimonitorApp')
           .map(function(p) {
             return {
               project: p,
+              name: p.name,
               isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
               show: true,
               loading: false,
@@ -100,7 +102,9 @@ angular.module('cimonitorApp')
               isFailure: (p.lastBuildStatus === 'Failure') || (p.lastBuildStatus === 'Exception') || (p.lastBuildStatus === 'Error')
               //$$hashKey: p.name+p.lastBuildTime
             };
-        }).value();
+        })
+        .groupBy(function(p) { return p.name; } )
+        .value();
         return vals;
       }
     };
