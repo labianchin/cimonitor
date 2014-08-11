@@ -8,23 +8,43 @@ angular.module('cimonitorApp')
 ;
 
 angular.module('cimonitorApp')
-  .factory('projectsModel', ['$http', '_', 'moment', function($http, _, moment) {
+  .factory('projectsModel', ['_', function(_) {
     var cleanAll = function() {
       model.all.length = 0; //clear model
+    };
+    var undefinedOrNull = function(val) {
+      return angular.isUndefined(val) || val === null;
     };
     var updateAll = function() {
       cleanAll();
       var values = _.values(model.byUrl);
       _.each(values, function(u) {
-        _.each(_.values(u), function(ps) {
-          model.all.push(ps[0]);
+        _.each(_.values(u), function(p) {
+          model.all.push(p);
         });
       });
     };
+    var verifyStatusChanges = function(old, news) {
+      if (angular.isUndefined(old)) {
+        return ;
+      }
+      var failEl = document.getElementById("AudioFailure");
+      for (var p in old) {
+        if (!angular.isUndefined(news[p])) {
+          if (old[p].isSuccess && news[p].isFailure) {
+            failEl.play(); //Play failure audio
+          }
+        }
+      }
+    };
+    var first = function(obj) {
+        for (var a in obj) return obj[a];
+    }
     var setProjectsStatus = function(url, projects) {
+      verifyStatusChanges(model.byUrl[url], projects);
       model.byUrl[url] = projects;
       updateAll();
-      model.lastUpdate = moment().format('MMM, Do HH:mm:ss');
+      model.lastUpdate = first(projects).lastUpdate;
       model.error = false;
       model.loading = false; // unset gloabl loading
     };
@@ -94,6 +114,7 @@ angular.module('cimonitorApp')
               project: p,
               name: p.name,
               isRecent: moment(p.lastBuildTime).add(3, 'minutes').isAfter(moment()),
+              lastUpdate: moment().format('MMM, Do HH:mm:ss'),
               show: true,
               loading: false,
               isRunning: p.activity === 'Building',
@@ -103,7 +124,7 @@ angular.module('cimonitorApp')
               //$$hashKey: p.name+p.lastBuildTime
             };
         })
-        .groupBy(function(p) { return p.name; } )
+        .indexBy('name')
         .value();
         return vals;
       }
