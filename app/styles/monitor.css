@@ -6,13 +6,13 @@
   top:0;
   z-index:1 !important;
   background-color:black;
-  filter: alpha(opacity=95); /* internet explorer */
-  -khtml-opacity: 0.95;      /* khtml, old safari */
-  -moz-opacity: 0.95;       /* mozilla, netscape */
-  opacity: 0.95;           /* fx, safari, opera */
+  overflow-y: scroll;
+  /*filter: alpha(opacity=95); [> internet explorer <]*/
+  /*-khtml-opacity: 0.95;      [> khtml, old safari <]*/
+  /*-moz-opacity: 0.95;       [> mozilla, netscape <]*/
+  /*opacity: 0.95;           [> fx, safari, opera <]*/
 }
 .monitor-container {
-  margin: 0.1em;
 }
 .error-msg, .update-info {
   font-size: 130%;
