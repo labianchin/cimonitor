@@ -158,10 +158,9 @@ angular.module('cimonitorApp')
         console.log('Error fetching report, got status ' + status + ' and data ' + data);
       };
       projectsModel.setUrlLoading(source.url);
-      var httpPromise = $http.get(source.url)
+      return $http.get(source.url)
         .success(onSuccess)
         .error(onError);
-      return httpPromise;
     };
     var refreshPromise = null;
     var stop = function() {
@@ -218,9 +217,7 @@ angular.module('cimonitorApp')
       return angular.toJson({monitorConfig: obj.config}, true);
     };
     var upload = function(str) {
-      var parsed = angular.fromJson(str);
-      setStorageTo(parsed);
-      console.debug(parsed);
+      setStorageTo(angular.fromJson(str));
     };
     var obj = {
       config: $localStorage.$default(defaultConfig).monitorConfig,
