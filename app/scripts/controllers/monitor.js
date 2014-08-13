@@ -12,9 +12,6 @@ angular.module('cimonitorApp')
     var cleanAll = function() {
       model.all.length = 0; //clear model
     };
-    var undefinedOrNull = function(val) {
-      return angular.isUndefined(val) || val === null;
-    };
     var updateAll = function() {
       cleanAll();
       var values = _.values(model.byUrl);
@@ -38,7 +35,7 @@ angular.module('cimonitorApp')
       }
     };
     var first = function(obj) {
-        for (var a in obj) return obj[a];
+        for (var a in obj){ return obj[a]; }
     }
     var setProjectsStatus = function(url, projects) {
       verifyStatusChanges(model.byUrl[url], projects);
@@ -199,8 +196,8 @@ angular.module('cimonitorApp')
     var defaultConfig = {
       monitorConfig: {
         refreshInterval: 20,
-        soundSuccess: 'audio/success.mp3',
-        soundFailure: 'audio/failure.mp3',
+        audioSuccess: 'audio/success.mp3',
+        audioFailure: 'audio/failure.wav',
         sources: [{
           url: 'demo/cctray_sample.xml',
           projects: []
