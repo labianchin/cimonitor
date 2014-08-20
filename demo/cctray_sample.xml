@@ -1,0 +1,47 @@
+<Projects>
+    <Project
+        name="SvnTest"
+        activity="Sleeping"
+        lastBuildStatus="Exception"
+        lastBuildLabel="8"
+        lastBuildTime="2013-09-28T05:28:32.9367149+01:00"
+        nextBuildTime="2013-10-06T09:31:52.4509241+01:00"
+        webUrl="http://foo.com/"/>
+
+    <Project
+        name="HelloWorld"
+        activity="Sleeping"
+        lastBuildStatus="Success"
+        lastBuildLabel="13"
+        lastBuildTime="2013-09-15T18:37:07.3447693+01:00"
+        nextBuildTime="2013-10-07T05:26:47.0799596+01:00"
+        webUrl="http://foo.com/"/>
+
+    <Project
+        name="Foo"
+        activity="Building"
+        lastBuildStatus="Warning"
+        lastBuildLabel="1234"
+        lastBuildTime="2013-09-28T05:28:32.9367149+01:00"
+        nextBuildTime="2013-10-06T09:31:52.4509241+01:00"
+        webUrl="http://foo.com/"/>
+
+    <Project
+        name="Green"
+        activity="Sleeping"
+        lastBuildStatus="Success"
+        lastBuildLabel="1234"
+        lastBuildTime="2013-09-28T05:28:32.9367149+01:00"
+        nextBuildTime="2013-10-06T09:31:52.4509241+01:00"
+        webUrl="http://foo.com/"/>
+
+
+    <Project
+        name="Bar"
+        activity="Sleeping"
+        lastBuildStatus="Unknown"
+        lastBuildLabel="99"
+        lastBuildTime="2013-09-15T18:37:07.3447693+01:00"
+        nextBuildTime="2013-10-07T05:26:47.0799596+01:00"
+        webUrl="http://foo.com/"/>
+</Projects>
