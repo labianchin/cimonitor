@@ -189,6 +189,13 @@ angular.module('cimonitorApp')
 ;
 
 angular.module('cimonitorApp')
+  .filter('trustUrl', function ($sce) {
+    return function(url) {
+      return $sce.trustAsResourceUrl(url);
+    };
+  });
+
+angular.module('cimonitorApp')
   .factory('monitorConfig', ['$localStorage', function($localStorage){
     var addSource = function(){
       obj.config.sources.push({url: '', projects: []});

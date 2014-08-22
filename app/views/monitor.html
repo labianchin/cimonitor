@@ -25,10 +25,10 @@
         <a class="btn btn-default" href="#/">Configure</a>
       </div>
     </div>
-    <audio id="AudioSuccess" src="{{config.config.audioSuccess}}">
+    <audio id="AudioSuccess" ng-src="{{ config.config.audioSuccess | trustUrl }}">
       Your browser does not support the audio element.
     </audio>
-    <audio id="AudioFailure" src="{{config.config.audioFailure}}">
+    <audio id="AudioFailure" ng-src="{{ config.config.audioFailure | trustUrl }}">
       Your browser does not support the audio element.
     </audio>
   </div>
