@@ -25,10 +25,11 @@ angular.module('cimonitorApp')
       if (angular.isUndefined(old)) {
         return ;
       }
+      //TODO create directive
       var failEl = document.getElementById("AudioFailure");
       for (var p in old) {
         if (!angular.isUndefined(news[p])) {
-          if (old[p].isSuccess && news[p].isFailure) {
+          if (!old[p].isFailure && news[p].isFailure) {
             failEl.play(); //Play failure audio
           }
         }
