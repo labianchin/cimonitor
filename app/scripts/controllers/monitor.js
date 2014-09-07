@@ -26,18 +26,19 @@ angular.module('cimonitorApp')
         return ;
       }
       //TODO create directive
-      var failEl = document.getElementById("AudioFailure");
+      var failEl = document.getElementById("Audiofailure");
       for (var p in old) {
         if (!angular.isUndefined(news[p])) {
           if (!old[p].isFailure && news[p].isFailure) {
             failEl.play(); //Play failure audio
+            return;
           }
         }
       }
     };
     var first = function(obj) {
         for (var a in obj){ return obj[a]; }
-    }
+    };
     var setProjectsStatus = function(url, projects) {
       verifyStatusChanges(model.byUrl[url], projects);
       model.byUrl[url] = projects;
@@ -201,11 +202,29 @@ angular.module('cimonitorApp')
     var addSource = function(){
       obj.config.sources.push({url: '', projects: []});
     };
+    var portOldConfig = function(config) {
+      if (angular.isUndefined(config.audio)) {
+        config.audio = {
+          success: 'audio/success.mp3',
+          failure: 'audio/failure.wav'
+        };
+      }
+      if (!angular.isUndefined(config.audioFailure)) {
+        config.audio.failure = config.audioFailure;
+        delete config.audioFailure;
+      }
+      if (!angular.isUndefined(config.audioSuccess)) {
+        config.audio.success = config.audioSuccess;
+        delete config.audioSuccess;
+      }
+    };
     var defaultConfig = {
       monitorConfig: {
         refreshInterval: 20,
-        audioSuccess: 'audio/success.mp3',
-        audioFailure: 'audio/failure.wav',
+        audio: {
+          success: 'audio/success.mp3',
+          failure: 'audio/failure.wav'
+        },
         sources: [{
           url: 'demo/cctray_sample.xml',
           projects: []
@@ -218,11 +237,11 @@ angular.module('cimonitorApp')
     var resetStorage = function() {
       setStorageTo(defaultConfig);
     };
-    var download = function() {
-      return angular.toJson({monitorConfig: obj.config}, true);
-    };
     var upload = function(str) {
       setStorageTo(angular.fromJson(str));
+    };
+    var download = function() {
+      return angular.toJson({monitorConfig: obj.config}, true);
     };
     var obj = {
       config: $localStorage.$default(defaultConfig).monitorConfig,
@@ -231,6 +250,7 @@ angular.module('cimonitorApp')
       upload: upload,
       reset: resetStorage
     };
+    portOldConfig(obj.config);
     return obj;
   }]);
 

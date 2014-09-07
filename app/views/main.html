@@ -36,13 +36,11 @@
           <label for="monitorConfigRefresh">Refresh Interval (seconds)</label>
           <input type="text" id="monitorConfigRefresh" class="form-control" ng-model="config.config.refreshInterval" />
         </div>
-        <div class="form-group" ng-hide="true">
-          <label for="monitorConfigAudioSuccess">Audio for successful build</label>
-          <input type="text" id="monitorConfigAudioSuccess" class="form-control" ng-model="config.config.audioSuccess" />
-        </div>
-        <div class="form-group">
-          <label for="monitorConfigAudioFailure">Audio for broken build</label>
-          <input type="text" id="monitorConfigAudioFailure" class="form-control" ng-model="config.config.audioFailure" />
+        <div class="audios-config" ng-repeat="t in ['failure']">
+          <div class="form-group">
+            <label for="monitorConfigAudio{{t}}">Audio for {{t}} build</label>
+            <input type="text" id="monitorConfigAudio{{t}}" class="form-control" ng-model="config.config.audio[t]" />
+          </div>
         </div>
         <a href="#/monitor" class="btn btn-default">Go to monitor</a>
         <button ng-click="config.addSource()" class="btn btn-default">Add new source</button>
