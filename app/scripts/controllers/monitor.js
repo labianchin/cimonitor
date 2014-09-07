@@ -43,7 +43,11 @@ angular.module('cimonitorApp')
       verifyStatusChanges(model.byUrl[url], projects);
       model.byUrl[url] = projects;
       updateAll();
-      model.lastUpdate = first(projects).lastUpdate;
+      if (projects.length > 0) {
+        model.lastUpdate = first(projects).lastUpdate;
+      } else {
+        model.lastUpdate = 'No project returned';
+      }
       model.error = false;
       model.loading = false; // unset gloabl loading
     };
