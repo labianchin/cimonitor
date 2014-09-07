@@ -119,3 +119,7 @@
 .hidden {
   display: none;
 }
+
+.hidden-btn {
+  position: absolute; left: -100%;
+}

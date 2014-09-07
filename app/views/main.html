@@ -7,6 +7,7 @@
   <div class="container">
     <div class="col-md-8 col-md-offset-2">
       <form role="form" novalidate class="simple-form">
+        <button class="hidden-btn" ng-click="go('monitor')" class="btn btn-default">go</button>
         <div ng-repeat="source in config.config.sources" class="panel panel-primary">
           <div class="panel-heading">
             <h4>Source {{$index + 1}}</h4>
