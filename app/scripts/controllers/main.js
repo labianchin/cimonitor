@@ -8,6 +8,7 @@
  * Controller of the cimonitorApp
  */
 angular.module('cimonitorApp')
-  .controller('MainCtrl', function ($scope, monitorConfig) {
+  .controller('MainCtrl', function ($scope, monitorConfig, goService) {
     $scope.config = monitorConfig;
+    $scope.go = goService;
   });

@@ -115,3 +115,7 @@
 .center form {
   display:inline-block;
 }
+
+.hidden {
+  display: none;
+}
