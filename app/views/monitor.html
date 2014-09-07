@@ -23,6 +23,7 @@
     <div class="row">
       <div class="center-block center">
         <a class="btn btn-default" href="#/">Configure</a>
+        <button class="btn btn-default" onClick="document.getElementById('Audiofailure').play(); return false;">Test Audio</button>
       </div>
     </div>
     <div class="audios" ng-repeat="(t, a) in config.config.audio">
