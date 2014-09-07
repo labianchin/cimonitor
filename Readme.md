@@ -18,7 +18,7 @@
 
 ## Know Issues
 
-- Remove button of "Selected Project" is removing all projects of a given source
+- ?
 
 
 ## Backlog/TODO

@@ -22,7 +22,7 @@
                 <div class="input-group">
                   <input type="text" class="form-control" ng-model="source.projects[$index]" />
                   <span class="input-group-btn">
-                    <button ng-click="source.projects.splice($index)" class="btn btn-default">Remove</button>
+                    <button ng-click="source.projects.splice($index, 1)" class="btn btn-default">Remove</button>
                   </span>
                 </div>
               </div>
