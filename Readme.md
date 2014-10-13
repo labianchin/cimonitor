@@ -3,7 +3,7 @@
 # CIMonitor
 
 
-- Loads cctray xml URLs, from Coninuous Integration (CI) tools
+- Loads cctray xml URLs, from Continuous Integration (CI) tools
 - Make with AngularJs and Yeoman
 - Configuration is saved in the browser's localStorage
 - Configuration may be loaded/exported to a JSON string
