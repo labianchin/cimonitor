@@ -11,8 +11,8 @@
     <div class="projects-results row">
       <div ng-repeat="b in projects.all | orderBy:['-project.lastBuildTime'] track by $index" class="project-container col-xs-6 col-sm-4 col-md-3 col-lg-3" ng-show="b.show">
         <div class="project-box" ng-class="{'project-status-running': b.isRunning, 'btn-success': b.isSuccess, 'btn-danger': b.isFailure, 'btn-warning': b.isWarning, 'btn-info': b.project.lastBuildStatus == 'Unknown', 'blink': b.isRecent, 'loading': b.loading}">
-          <img ng-if="b.isFailure" class="build-img" src="../images/failure_build.png"/>
-          <img ng-if="b.isSuccess" class="build-img" src="../images/success_build.png"/>
+          <img ng-if="b.isFailure" class="build-img" ng-src="{{ config.config.img['failure'] | trustUrl }}"/>
+          <img ng-if="b.isSuccess" class="build-img" ng-src="{{ config.config.img['success'] | trustUrl }}"/>
           <a href="{{b.project.webUrl}}">
             <div class="project-name">{{b.project.name}}</div>
             <div class="project-label">{{b.project.lastBuildLabel}}</div>

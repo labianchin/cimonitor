@@ -208,6 +208,12 @@ angular.module('cimonitorApp')
       obj.config.sources.push({url: '', projects: []});
     };
     var portOldConfig = function(config) {
+      if (angular.isUndefined(config.img)) {
+        config.img = {
+          success: 'images/success_build.png',
+          failure: 'images/failure_build.png'
+        };
+      }
       if (angular.isUndefined(config.audio)) {
         config.audio = {
           success: 'audio/success.mp3',
@@ -229,6 +235,10 @@ angular.module('cimonitorApp')
         audio: {
           success: 'audio/success.mp3',
           failure: 'audio/failure.wav'
+        },
+        img: {
+          success: 'images/success_build.png',
+          failure: 'images/failure_build.png'
         },
         sources: [{
           url: 'demo/cctray_sample.xml',

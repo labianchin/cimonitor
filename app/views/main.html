@@ -43,6 +43,12 @@
             <input type="text" id="monitorConfigAudio{{t}}" class="form-control" ng-model="config.config.audio[t]" />
           </div>
         </div>
+        <div class="images-config" ng-repeat="(t, v) in config.config.img">
+          <div class="form-group">
+            <label for="monitorConfigImages{{t}}">Image for {{t}} build</label>
+            <input type="text" id="monitorConfigImage{{t}}" class="form-control" ng-model="config.config.img[t]" />
+          </div>
+        </div>
         <a href="#/monitor" class="btn btn-default">Go to monitor</a>
         <button ng-click="config.addSource()" class="btn btn-default">Add source</button>
         <button ng-click="config.reset()" class="btn btn-default">Reset</button>
