@@ -25,3 +25,5 @@
 
 - Add sound for broken to successful build
 - Add custom action for build new state, like opening browse window
+- Refresh page every one hour (if internet is working)
+- Add fork me on github link
