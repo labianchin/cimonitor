@@ -196,11 +196,12 @@ angular.module('cimonitorApp')
 ;
 
 angular.module('cimonitorApp')
-  .filter('trustUrl', function ($sce) {
+  .filter('trustUrl', ['$sce', function ($sce) {
     return function(url) {
       return $sce.trustAsResourceUrl(url);
     };
-  });
+  }
+  ]);
 
 angular.module('cimonitorApp')
   .factory('monitorConfig', ['$localStorage', function($localStorage){

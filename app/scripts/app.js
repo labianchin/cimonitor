@@ -22,7 +22,8 @@ angular
     'ngStorage',
     'ngIdle'
   ])
-  .config(function ($routeProvider) {
+  .config(['$routeProvider',
+  function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -44,7 +45,8 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  })
+  }
+  ])
   .config( [
       '$idleProvider', '$keepaliveProvider',
       function( $idleProvider, $keepaliveProvider ) {
@@ -53,15 +55,15 @@ angular
         $keepaliveProvider.interval(30); // in seconds
       }
   ])
-  .run(function($rootScope, $idle) {
-    console.log('opa');
-    $idle.watch();
-    console.log($idle.running());
-    $rootScope.$on('$idleTimeout', function() {
-    console.log('idle');
-      location.reload();
-    });
-  })
+  .run(['$rootScope', '$idle',
+      function($rootScope, $idle) {
+        $idle.watch();
+        $rootScope.$on('$idleTimeout', function() {
+          console.log('idle');
+          location.reload();
+        });
+      }
+  ])
   .config( [
       '$compileProvider',
       function( $compileProvider )
