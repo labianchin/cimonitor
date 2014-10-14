@@ -23,7 +23,7 @@
 
 ## Backlog/TODO
 
-- Add sound for broken to successful build
-- Add custom action for build new state, like opening browse window
-- Refresh page every one hour (if internet is working)
-- Add fork me on github link
+- [ ] Add sound for broken to successful build
+- [ ] Add custom action for build new state, like opening browse window
+- [ ] Add fork me on github link
+- [x] Refresh page every one hour (if internet is working)
