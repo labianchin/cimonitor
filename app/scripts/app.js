@@ -19,7 +19,8 @@ angular
     'underscore',
     'angularMoment',
     'cb.x2js',
-    'ngStorage'
+    'ngStorage',
+    'ngIdle'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -43,6 +44,23 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+  })
+  .config( [
+      '$idleProvider', '$keepaliveProvider',
+      function( $idleProvider, $keepaliveProvider ) {
+        $idleProvider.idleDuration(60); // 1 minutes idle
+        $idleProvider.warningDuration(60); // in seconds
+        $keepaliveProvider.interval(30); // in seconds
+      }
+  ])
+  .run(function($rootScope, $idle) {
+    console.log('opa');
+    $idle.watch();
+    console.log($idle.running());
+    $rootScope.$on('$idleTimeout', function() {
+    console.log('idle');
+      location.reload();
+    });
   })
   .config( [
       '$compileProvider',
