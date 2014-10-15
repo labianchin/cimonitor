@@ -16,7 +16,8 @@ describe('Controller: ExportCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('should have something in the scope', function () {
+    // no real value with this test
+    expect(scope.export).not.toBeUndefined();
   });
 });
