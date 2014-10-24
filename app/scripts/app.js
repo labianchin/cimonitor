@@ -10,12 +10,12 @@
  */
 angular
   .module('cimonitorApp', [
-    'ngAnimate',
-    'ngCookies',
+    //'ngAnimate',
+    //'ngCookies',
     'ngResource',
     'ngRoute',
-    'ngSanitize',
-    'ngTouch',
+    //'ngSanitize',
+    //'ngTouch',
     'underscore',
     'angularMoment',
     'cb.x2js',
