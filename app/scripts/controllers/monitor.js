@@ -26,7 +26,7 @@ angular.module('cimonitorApp')
         return ;
       }
       //TODO create directive
-      var failEl = document.getElementById("Audiofailure");
+      var failEl = document.getElementById('Audiofailure');
       for (var p in old) {
         if (!angular.isUndefined(news[p])) {
           if (!old[p].isFailure && news[p].isFailure) {
@@ -149,7 +149,7 @@ angular.module('cimonitorApp')
     var updateSource = function(source) {
       var processProjects = processProjectsService(source.projects);
       var onSuccess = function(data) {
-        var jsonData = x2js.xml_str2json(data);
+        var jsonData = x2js.xml_str2json(data); // jshint ignore:line
         var results = processProjects(jsonData);
         if (results !== null) {
           projectsModel.setProjectsStatus(source.url, results);
@@ -270,7 +270,6 @@ angular.module('cimonitorApp')
     return obj;
   }]);
 
-'use strict';
 /**
  * @ngdoc function
  * @name ciMonitorApp.controller:MonitorCtrl

@@ -10,7 +10,7 @@ angular.module('cimonitorApp')
       goService('/');
     };
     var obj = {
-      exportString: "",
+      exportString: '',
       prepare: prepare,
       load: load
     };
