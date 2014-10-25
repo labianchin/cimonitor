@@ -27,8 +27,8 @@
         webUrl="http://foo.com/"/>
 
     <Project
-        name="Green"
-        activity="Sleeping"
+        name="Green with very long name"
+        activity="Building"
         lastBuildStatus="Success"
         lastBuildLabel="1234"
         lastBuildTime="2013-09-28T05:28:32.9367149+01:00"
